@@ -6,6 +6,7 @@
 
 <!--HAPUS usesClearTextTraffic JIKA UDAH -->
     <application
+        android:name=".KarepApplication"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
