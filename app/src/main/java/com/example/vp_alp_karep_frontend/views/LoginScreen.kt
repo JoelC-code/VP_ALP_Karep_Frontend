@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import com.example.vp_alp_karep_frontend.uiStates.LoginUiStates
-import com.example.vp_alp_karep_frontend.viewModels.fakeLoginViewModel
+import com.example.vp_alp_karep_frontend.viewModels.FakeLoginViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: fakeLoginViewModel,
+    viewModel: FakeLoginViewModel,
     navController: NavHostController
 ) {
     when(val state = viewModel.authStatus){

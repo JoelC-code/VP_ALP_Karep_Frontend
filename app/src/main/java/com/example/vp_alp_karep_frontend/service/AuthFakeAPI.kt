@@ -2,12 +2,13 @@
 package com.example.vp_alp_karep_frontend.service
 
 import com.example.vp_alp_karep_frontend.models.LoginFakeResponse
+import retrofit2.Call
 import retrofit2.http.POST
 
 interface AuthFakeAPI {
     @POST("api/loginDev")
-    suspend fun loginDev(): LoginFakeResponse
+    fun loginDev(): Call<LoginFakeResponse>
 
     @POST("api/loginUser")
-    suspend fun loginUser(): LoginFakeResponse
+    fun loginUser(): Call<LoginFakeResponse>
 }
