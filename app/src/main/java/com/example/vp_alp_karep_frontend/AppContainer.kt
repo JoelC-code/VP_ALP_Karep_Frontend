@@ -36,7 +36,7 @@ class AppContainer (
         4. Ganti "192.168.x.xx" pada backendURL dengan IPv4 Address yang ditemukan
         -- IP Address UC bisa beda beda jadi cari sendiri dan ganti sebelum presentasi! --
      */
-    private val backendURL = "http://192.168.x.xx:3000"
+    private val backendURL = "http://192.168.x.xx:3000/"
 
 
     //RETROFIT SERVICE
