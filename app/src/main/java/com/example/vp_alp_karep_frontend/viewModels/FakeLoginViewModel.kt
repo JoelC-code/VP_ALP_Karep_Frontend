@@ -12,13 +12,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.LoginFakeResponse
 import com.example.vp_alp_karep_frontend.repositories.AuthFakeRepository
+import com.example.vp_alp_karep_frontend.repositories.AuthRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.LoginUiStates
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class FakeLoginViewModel(
-    private val repository: AuthFakeRepository
+    private val repository: AuthRepositoryInterface
 ) : ViewModel() {
     var authStatus: LoginUiStates by mutableStateOf(
         LoginUiStates.Start
@@ -44,16 +45,39 @@ class FakeLoginViewModel(
                 }
 
                 override fun onFailure(p0: Call<LoginFakeResponse?>, t: Throwable) {
-                    authStatus = LoginUiStates.Error(t :? t.localizedMessage)
+                    authStatus = LoginUiStates.Error(t.localizedMessage!!)
                 }
             })
         } catch (e: Exception) {
-            authStatus = LoginUiStates.Error(e.localizedMessage)
+            authStatus = LoginUiStates.Error(e.localizedMessage!!)
         }
     }
 
     fun loginCompany() {
+        authStatus = LoginUiStates.Loading
 
+        try {
+            val call = repository.loginDev()
+
+            call.enqueue(object: Callback<LoginFakeResponse> {
+                override fun onResponse(
+                    call: Call<LoginFakeResponse>,
+                    response: Response<LoginFakeResponse>
+                ) {
+                    if(response.isSuccessful && response.body() != null) {
+                        authStatus = LoginUiStates.Success(response.body()!!)
+                    } else {
+                        authStatus = LoginUiStates.Error("Login failed")
+                    }
+                }
+
+                override fun onFailure(p0: Call<LoginFakeResponse?>, t: Throwable) {
+                    authStatus = LoginUiStates.Error(t.localizedMessage!!)
+                }
+            })
+        } catch (e: Exception) {
+            authStatus = LoginUiStates.Error(e.localizedMessage!!)
+        }
     }
 
     fun resetState() {
@@ -64,8 +88,8 @@ class FakeLoginViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as KarepApplication
-                val fakeUserRepo = app.container.authRepository
-                FakeLoginViewModel(fakeUserRepo as AuthFakeRepository)
+                val repo = app.container.authRepository
+                FakeLoginViewModel(repo)
             }
         }
     }
