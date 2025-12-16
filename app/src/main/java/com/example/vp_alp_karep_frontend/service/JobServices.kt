@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface JobServices {
@@ -14,10 +15,10 @@ interface JobServices {
         @Header("Authorization") token: String
     ): Call<GetAllJobsResponse>
 
-    @GET("api/job/{id}")
+    @GET("api/job/{jobId}")
     fun getJob(
         @Header("Authorization") token: String,
-        @Query("id") id: Int
+        @Path("jobId") jobId: Int
     ): Call<GetJobResponse>
 
     @GET("api/job-list/job")
