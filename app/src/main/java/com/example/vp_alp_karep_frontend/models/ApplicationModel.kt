@@ -19,8 +19,3 @@ data class GetAllApplicationResponse (
 data class GetApplicationResponse(
     val data: ApplicationModel
 )
-
-data class CreateApplicationRequest(
-    @SerializedName("job_id")
-    val jobId: Int
-)
