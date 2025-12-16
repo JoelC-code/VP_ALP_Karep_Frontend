@@ -24,10 +24,7 @@ class ApplicationListViewModel(
     val uiState: StateFlow<ApplicationListUiStates> = _uiState
 
     fun loadApplications(token: String) {
-        if(_uiState.value is ApplicationListUiStates.Loading) return
-
         _uiState.value = ApplicationListUiStates.Loading
-
         val call = repository.getMyApplications(token)
         call.enqueue(object : Callback<GetAllApplicationResponse> {
             override fun onResponse(
@@ -48,8 +45,6 @@ class ApplicationListViewModel(
     }
 
     fun cancelApplication(token: String, id: Int) {
-        if(_uiState.value is ApplicationListUiStates.Loading) return
-
         _uiState.value = ApplicationListUiStates.Loading
 
         val call = repository.cancelApplication(token, id)
@@ -72,8 +67,6 @@ class ApplicationListViewModel(
     }
 
     fun deleteApplication(token: String, id: Int) {
-        if(_uiState.value is ApplicationListUiStates.Loading) return
-
         _uiState.value = ApplicationListUiStates.Loading
 
         repository.deleteApplication(token, id)

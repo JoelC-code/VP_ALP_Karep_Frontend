@@ -8,6 +8,7 @@ import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.GetJobResponse
 import com.example.vp_alp_karep_frontend.repositories.JobRepository
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.JobDetailUiStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class JobDetailViewModel(
-    private val repository: JobRepository
+    private val repository: JobRepositoryInterface
 ): ViewModel() {
     private val _uiStates = MutableStateFlow<JobDetailUiStates>(JobDetailUiStates.start)
     val uiStates: StateFlow<JobDetailUiStates> = _uiStates
@@ -51,8 +52,8 @@ class JobDetailViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as KarepApplication
-                val repository = app.container.applicationRepository
-                ApplicationListViewModel(repository)
+                val repository = app.container.jobRepository
+                JobDetailViewModel(repository)
             }
         }
     }

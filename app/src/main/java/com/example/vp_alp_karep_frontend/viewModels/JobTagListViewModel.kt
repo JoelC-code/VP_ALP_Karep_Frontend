@@ -24,8 +24,6 @@ class JobTagListViewModel(
     val uiStates: StateFlow<JobTagUiStates> = _uiStates
 
     fun loadJobTags(token: String) {
-        if(_uiStates.value is JobTagUiStates.Loading) return
-
         viewModelScope.launch {
             _uiStates.value = JobTagUiStates.Loading
 
@@ -60,8 +58,8 @@ class JobTagListViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as KarepApplication
-                val repository = app.container.applicationRepository
-                ApplicationListViewModel(repository)
+                val repository = app.container.jobTagRepository
+                JobTagListViewModel(repository)
             }
         }
     }

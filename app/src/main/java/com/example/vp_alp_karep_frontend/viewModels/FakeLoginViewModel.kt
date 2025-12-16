@@ -1,4 +1,4 @@
-//Hapus jika mau nyambung ke backend beneran
+//TODO Hapus jika mau nyambung ke backend beneran
 package com.example.vp_alp_karep_frontend.viewModels
 
 import androidx.compose.runtime.getValue
@@ -21,6 +21,11 @@ import retrofit2.Response
 class FakeLoginViewModel(
     private val repository: AuthRepositoryInterface
 ) : ViewModel() {
+
+    var cachedToken: String? = null
+
+    var canApply: Boolean = true
+
     var authStatus: LoginUiStates by mutableStateOf(
         LoginUiStates.Start
     )
@@ -39,6 +44,7 @@ class FakeLoginViewModel(
                 ) {
                     if(response.isSuccessful && response.body() != null) {
                         authStatus = LoginUiStates.Success(response.body()!!)
+                        canApply = true
                     } else {
                         authStatus = LoginUiStates.Error("Login failed")
                     }
@@ -66,6 +72,7 @@ class FakeLoginViewModel(
                 ) {
                     if(response.isSuccessful && response.body() != null) {
                         authStatus = LoginUiStates.Success(response.body()!!)
+                        canApply = false
                     } else {
                         authStatus = LoginUiStates.Error("Login failed")
                     }
