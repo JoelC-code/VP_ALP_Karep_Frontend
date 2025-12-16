@@ -1,4 +1,5 @@
 package com.example.vp_alp_karep_frontend.models
 
-class models {
-}
+data class ErrorModel(
+    val errors: String
+)
