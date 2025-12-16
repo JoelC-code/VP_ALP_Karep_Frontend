@@ -1,3 +1,4 @@
+//TODO Hapus jika udah nyambung
 package com.example.vp_alp_karep_frontend.uiStates
 
 import com.example.vp_alp_karep_frontend.models.LoginFakeResponse

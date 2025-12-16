@@ -1,4 +1,4 @@
-//HAPUS JIKA SUDAH NYAMBUNG KE FRONTEND
+//TODO HAPUS JIKA SUDAH NYAMBUNG KE FRONTEND
 package com.example.vp_alp_karep_frontend.views
 
 import androidx.compose.foundation.layout.Column
@@ -34,13 +34,22 @@ fun LoginScreen(
 
         is LoginUiStates.Success -> {
             val user = state.result.user
+            val token = state.result.token
+
+            val canApply = viewModel.canApply
+
+            if(user == null) {
+                Text("Login Succeded, no user detected")
+                return
+            }
 
             LaunchedEffect(user.id) {
                 navController.navigate(
-                    "dashboard/${user.name}/${user.email}"
+                    "dashboard/${user.name}/${user.email}?token=$token&canApply=$canApply"
                 ) {
                     popUpTo("login") { inclusive = true }
                 }
+                viewModel.cachedToken = token
                 viewModel.resetState()
             }
         }
