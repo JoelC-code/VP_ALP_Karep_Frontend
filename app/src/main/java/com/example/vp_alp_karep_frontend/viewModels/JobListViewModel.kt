@@ -81,8 +81,6 @@ class JobListViewModel(
     }
 
     fun loadJobsOnSearch(token: String, search: String? = null) {
-        if(_uiStates.value is JobListUiStates.Loading) return
-
         _uiStates.value = JobListUiStates.Loading
         val call = if(search.isNullOrBlank()) {
             repository.getAllJobs(token)
@@ -116,8 +114,8 @@ class JobListViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as KarepApplication
-                val repository = app.container.applicationRepository
-                ApplicationListViewModel(repository)
+                val repository = app.container.jobRepository
+                JobListViewModel(repository)
             }
         }
     }
