@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/uiStates/ApplicationStatusUIState.kt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/uiStates/ApplicationStatusUIState.kt" />
+              <option name="originalContent" value="package com.example.vp_alp_karep_frontend.uiStates&#10;&#10;import com.example.vp_alp_karep_frontend.models.ApplicationModel&#10;&#10;sealed interface ApplicationStatusUIState {&#10;    data class Success(val applications: List&lt;ApplicationModel&gt;): ApplicationStatusUIState&#10;    object Start: ApplicationStatusUIState&#10;    object Loading: ApplicationStatusUIState&#10;    data class Failed(val errorMessage: String): ApplicationStatusUIState&#10;}" />
+              <option name="updatedContent" value="package com.example.vp_alp_karep_frontend.uiStates&#10;&#10;import com.example.vp_alp_karep_frontend.models.ApplicationModel&#10;&#10;sealed interface ApplicationStatusUIState {&#10;    data class Success(val applications: List&lt;ApplicationModel&gt;): ApplicationStatusUIState&#10;    object Start: ApplicationStatusUIState&#10;    object Loading: ApplicationStatusUIState&#10;    data class Failed(val errorMessage: String): ApplicationStatusUIState&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
