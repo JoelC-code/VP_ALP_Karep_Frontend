@@ -3,6 +3,7 @@ package com.example.vp_alp_karep_frontend.views
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -10,6 +11,7 @@ import com.example.vp_alp_karep_frontend.viewModels.ApplicationListViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.example.vp_alp_karep_frontend.uiStates.ApplicationListUiStates
 import com.example.vp_alp_karep_frontend.views.templates.ApplicationCards
 
@@ -49,6 +51,18 @@ fun ApplicationScreen(
             }
         }
         is ApplicationListUiStates.Success -> {
+            if(((state as ApplicationListUiStates.Success).applications).isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No applications found.",
+                        color = Color.LightGray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
             ApplicationCards(
                 onCancel = { id ->
                     viewModel.cancelApplication(token, id)

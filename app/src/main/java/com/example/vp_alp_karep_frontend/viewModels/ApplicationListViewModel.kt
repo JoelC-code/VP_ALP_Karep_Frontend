@@ -82,7 +82,7 @@ class ApplicationListViewModel(
                 if(response.isSuccessful) {
                     loadApplications(token)
                 } else {
-                    _uiState.value = ApplicationListUiStates.Error("Action Failer (${response.code()})")
+                    _uiState.value = ApplicationListUiStates.Error("Action Failed (${response.code()})")
                 }
             }
 
