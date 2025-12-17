@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +22,11 @@ import com.example.vp_alp_karep_frontend.models.JobTagModel
 fun JobTagChecklist(
     tags: List<JobTagModel>
 ) {
-    val checkedTags = remember { mutableMapOf<Int, Boolean>() }
+    val checkedTags = remember { mutableStateMapOf<Int, Boolean>() }
 
     Column {
         tags.forEach { tag ->
-            val checked = checkedTags[tag.id] ?: false
+            val checked = checkedTags[tag.id] == true
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
