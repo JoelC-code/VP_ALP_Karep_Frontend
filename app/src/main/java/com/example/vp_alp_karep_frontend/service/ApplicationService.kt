@@ -20,13 +20,13 @@ interface ApplicationService {
         @Path("jobId") jobId: Int
     ): Call<ApplicationResponse>
 
-    @PUT("api/companies/applications/:applicationId/accept")
+    @PUT("api/companies/applications/{applicationId}/accept")
     fun acceptApplication(
         @Header("Authorization") token: String,
         @Path("applicationId") applicationId: Int
     ): Call<GeneralResponseModel>
 
-    @PUT("api/companies/applications/:applicationId/reject")
+    @PUT("api/companies/applications/{applicationId}/reject")
     fun rejectApplication(
         @Header("Authorization") token: String,
         @Path("applicationId") applicationId: Int

@@ -25,28 +25,28 @@ class ApplicationRepository(
     private val applicationService: ApplicationService
 ): ApplicationRepositoryInterface {
     override fun getApplications(token: String): Call<ApplicationResponse> {
-        return applicationService.getApplications(token)
+        return applicationService.getApplications("Bearer ${token}")
     }
 
     override fun getApplicationsByJob(
         token: String,
         jobId: Int
     ): Call<ApplicationResponse> {
-        return applicationService.getApplicationsByJob(token, jobId)
+        return applicationService.getApplicationsByJob("Bearer ${token}", jobId)
     }
 
     override fun acceptApplication(
         token: String,
         applicationId: Int
     ): Call<GeneralResponseModel> {
-        return applicationService.acceptApplication(token, applicationId)
+        return applicationService.acceptApplication("Bearer ${token}", applicationId)
     }
 
     override fun rejectApplication(
         token: String,
         applicationId: Int
     ): Call<GeneralResponseModel> {
-        return applicationService.rejectApplication(token, applicationId)
+        return applicationService.rejectApplication("Bearer ${token}", applicationId)
     }
 
 }

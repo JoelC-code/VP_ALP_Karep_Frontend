@@ -72,11 +72,11 @@ class ApplicationViewModel(
                         call: Call<ApplicationResponse?>,
                         t: Throwable
                     ) {
-                        getApplicationsStatus = ApplicationStatusUIState.Failed(t.localizedMessage)
+                        getApplicationsStatus = ApplicationStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
                 })
             } catch (error: IOException) {
-                getApplicationsStatus = ApplicationStatusUIState.Failed(error.localizedMessage)
+                getApplicationsStatus = ApplicationStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
@@ -100,8 +100,9 @@ class ApplicationViewModel(
                         res: Response<GeneralResponseModel>
                     ) {
                         if (res.isSuccessful) {
+                            val responseData = res.body()?.data ?: "Application accepted successfully"
                             acceptApplicationStatus = StringDataStatusUIState.Success(
-                                res.body()!!.data
+                                responseData
                             )
                         } else {
                             val errorMessage = Gson().fromJson(
@@ -118,13 +119,13 @@ class ApplicationViewModel(
                         call: Call<GeneralResponseModel>,
                         t: Throwable
                     ) {
-                        acceptApplicationStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+                        acceptApplicationStatus = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
 
                 })
 
             } catch (error: IOException) {
-                acceptApplicationStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+                acceptApplicationStatus = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
@@ -148,8 +149,9 @@ class ApplicationViewModel(
                         res: Response<GeneralResponseModel>
                     ) {
                         if (res.isSuccessful) {
+                            val responseData = res.body()?.data ?: "Application rejected successfully"
                             rejectApplicationStatus = StringDataStatusUIState.Success(
-                                res.body()!!.data
+                                responseData
                             )
                         } else {
                             val errorMessage = Gson().fromJson(
@@ -166,13 +168,13 @@ class ApplicationViewModel(
                         call: Call<GeneralResponseModel>,
                         t: Throwable
                     ) {
-                        rejectApplicationStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+                        rejectApplicationStatus = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
 
                 })
 
             } catch (error: IOException) {
-                rejectApplicationStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+                rejectApplicationStatus = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }

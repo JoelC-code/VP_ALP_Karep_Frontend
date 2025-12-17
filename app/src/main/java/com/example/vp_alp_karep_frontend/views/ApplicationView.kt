@@ -55,9 +55,7 @@ fun ApplicationView(
     val tabs = listOf("Pending", "Accepted", "Rejected")
 
     LaunchedEffect(token) {
-        if (token.isNotEmpty()) {
-            applicationViewModel.getApplications(token)
-        }
+        applicationViewModel.getApplications(token)
     }
 
     LaunchedEffect(acceptApplicationStatus) {
@@ -95,7 +93,6 @@ fun ApplicationView(
             else -> {}
         }
     }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -129,7 +126,6 @@ fun ApplicationView(
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
-
         TabRow(
             selectedTabIndex = selectedTabIndex,
             containerColor = Color.White,
@@ -148,31 +144,33 @@ fun ApplicationView(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
-
         when (getApplicationsStatus) {
             is ApplicationStatusUIState.Success -> {
-                // Display application if status matches selected tab
-                if (getApplicationsStatus.applicationModel.status.lowercase() == tabs[selectedTabIndex].lowercase()) {
+                val filteredApplications = getApplicationsStatus.applications.filter {
+                    it.status.lowercase().trim() == tabs[selectedTabIndex].lowercase().trim()
+                }
+
+
+                if (filteredApplications.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        item {
+                        items(filteredApplications.size) { index ->
                             ApplicationCard(
-                                applicationModel = getApplicationsStatus.applicationModel,
+                                applicationModel = filteredApplications[index],
                                 onAccept = {
                                     applicationViewModel.acceptApplication(
                                         token = token,
-                                        applicationId = getApplicationsStatus.applicationModel.id
+                                        applicationId = filteredApplications[index].id
                                     )
                                 },
                                 onReject = {
                                     applicationViewModel.rejectApplication(
                                         token = token,
-                                        applicationId = getApplicationsStatus.applicationModel.id
+                                        applicationId = filteredApplications[index].id
                                     )
                                 }
                             )

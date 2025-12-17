@@ -67,9 +67,9 @@ fun ApplicationCard(
                         color = Color.DarkGray
                     )
 
-                    if (applicationModel.job.isNotEmpty()) {
+                    applicationModel.job?.let { job ->
                         Text(
-                            text = "Job: ${applicationModel.job[0].data.name}",
+                            text = "Job: ${job.name}",
                             fontSize = 14.sp,
                             color = Color.DarkGray,
                             maxLines = 2,
