@@ -100,10 +100,7 @@ class ApplicationViewModel(
                         res: Response<GeneralResponseModel>
                     ) {
                         if (res.isSuccessful) {
-                            val responseData = res.body()?.data ?: "Application accepted successfully"
-                            acceptApplicationStatus = StringDataStatusUIState.Success(
-                                responseData
-                            )
+                            acceptApplicationStatus = StringDataStatusUIState.Success(res.body()!!.data)
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
@@ -149,9 +146,8 @@ class ApplicationViewModel(
                         res: Response<GeneralResponseModel>
                     ) {
                         if (res.isSuccessful) {
-                            val responseData = res.body()?.data ?: "Application rejected successfully"
                             rejectApplicationStatus = StringDataStatusUIState.Success(
-                                responseData
+                                res.body()!!.data
                             )
                         } else {
                             val errorMessage = Gson().fromJson(
