@@ -1,7 +1,7 @@
 package com.example.vp_alp_karep_frontend.models
 
 data class CompanyTagsResponse (
-    val data: CompanyTagsModel
+    val data: CompanyTagsModel?
 )
 
 data class CompanyTagsModel (

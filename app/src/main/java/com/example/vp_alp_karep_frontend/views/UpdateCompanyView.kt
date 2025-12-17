@@ -49,9 +49,7 @@ fun UpdateCompanyView(
     var isLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(token) {
-        if (token.isNotEmpty()) {
-            updateCompanyViewModel.getCompanyProfile(token)
-        }
+        updateCompanyViewModel.getCompanyProfile(token)
     }
 
     LaunchedEffect(getCompanyProfileStatus) {
@@ -110,7 +108,6 @@ fun UpdateCompanyView(
             .background(Color.White)
             .statusBarsPadding()
     ) {
-        // Top Bar with Back Button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -156,7 +153,6 @@ fun UpdateCompanyView(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Company Name Field (Required)
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -170,7 +166,6 @@ fun UpdateCompanyView(
                         )
                     )
 
-                    // Address Field
                     OutlinedTextField(
                         value = address,
                         onValueChange = { address = it },
@@ -185,7 +180,6 @@ fun UpdateCompanyView(
                         )
                     )
 
-                    // Phone Number Field
                     OutlinedTextField(
                         value = phoneNumber,
                         onValueChange = { phoneNumber = it },
@@ -200,7 +194,6 @@ fun UpdateCompanyView(
                         )
                     )
 
-                    // Website Field
                     OutlinedTextField(
                         value = website,
                         onValueChange = { website = it },
@@ -215,7 +208,6 @@ fun UpdateCompanyView(
                         )
                     )
 
-                    // Founding Date Field
                     OutlinedTextField(
                         value = foundingDate,
                         onValueChange = { foundingDate = it },
@@ -230,7 +222,6 @@ fun UpdateCompanyView(
                         )
                     )
 
-                    // Vision Mission Field
                     OutlinedTextField(
                         value = visionMission,
                         onValueChange = { visionMission = it },
@@ -245,7 +236,6 @@ fun UpdateCompanyView(
                         )
                     )
 
-                    // Description Field
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
@@ -262,7 +252,6 @@ fun UpdateCompanyView(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Update Button
                     Button(
                         onClick = {
                             if (name.isBlank()) {

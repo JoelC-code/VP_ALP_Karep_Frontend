@@ -19,7 +19,7 @@ data class CompanyModel (
     val logo_path: String = "",
     val image_path: String = "",
     val user_id: Int = 0,
-    val company_tags: List<CompanyTagsResponse> = emptyList(),
+    val company_tags: List<CompanyTagsModel> = emptyList(),
     val total_jobs: Int = 0
 )
 

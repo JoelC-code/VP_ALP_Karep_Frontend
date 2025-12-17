@@ -22,7 +22,7 @@ fun KarepMain(
     updateCompanyViewModel: UpdateCompanyViewModel = viewModel(factory = UpdateCompanyViewModel.Factory)
 ) {
     val localContext = LocalContext.current
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY1OTAzMDE4LCJleHAiOjE3Njg0OTUwMTh9.E2Hlsh2LuLR60Xn5vIxPpNGKhjoE79jlvT8WC2rv0WU"
+    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY1OTQ0OTM5LCJleHAiOjE3Njg1MzY5Mzl9.1H5FHXnxgUpfCl3o2h_oX54qmcizG-WOvg6ZDeILc1I"
 
     NavHost(
         navController = navController,

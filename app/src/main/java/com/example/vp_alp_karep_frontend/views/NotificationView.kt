@@ -46,6 +46,10 @@ fun NotificationView(
     val getAllNotificationsStatus = notificationViewModel.getAllNotificationsStatus
     val deleteNotificationStatus = notificationViewModel.deleteNotificationStatus
 
+    LaunchedEffect(token) {
+        notificationViewModel.getAllNotifications(token)
+    }
+
     LaunchedEffect(deleteNotificationStatus) {
         when (deleteNotificationStatus) {
             is StringDataStatusUIState.Success -> {

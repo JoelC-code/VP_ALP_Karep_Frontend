@@ -21,6 +21,6 @@ class NotificationRepository(
         token: String,
         notificationId: Int
     ): Call<GeneralResponseModel> {
-        return notificationService.deleteNotification(token, notificationId)
+        return notificationService.deleteNotification("Bearer ${token}", notificationId)
     }
 }

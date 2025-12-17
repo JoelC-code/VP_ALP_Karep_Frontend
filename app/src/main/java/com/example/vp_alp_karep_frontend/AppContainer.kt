@@ -25,7 +25,8 @@ interface AppContainerInterface {
 class AppContainer (
 ): AppContainerInterface {
 //    private val backendURL = "http://192.168.56.1:3000/"
-    private val backendURL = "http://10.118.177.225:3000/"
+//    private val backendURL = "http://10.118.177.225:3000/"
+    private val backendURL = "http://10.0.40.131:3000/"
 
     private val companyRetrofitService: CompanyService by lazy {
         val  retrofit = initRetrofit()

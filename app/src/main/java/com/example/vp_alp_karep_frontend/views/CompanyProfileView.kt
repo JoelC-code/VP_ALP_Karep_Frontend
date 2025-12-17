@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -32,6 +33,17 @@ import com.example.vp_alp_karep_frontend.viewModels.CompanyViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+fun getTagColor(index: Int): Color {
+    val colors = listOf(
+        Color(0xFF2D2D2D),  // Dark Gray
+        Color(0xFF4A4A4A),  // Medium Dark Gray
+        Color(0xFF6B6B6B),  // Medium Gray
+        Color(0xFF8E8E8E),  // Light Medium Gray
+        Color(0xFF000000)   // Black
+    )
+    return colors[index % colors.size]
+}
 
 @Composable
 fun CompanyProfileView(
@@ -231,6 +243,7 @@ fun CompanyProfileView(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+            // Company Tags Section
             if (getCompanyProfileStatus.companyModel.company_tags.isNotEmpty()) {
                 Card(
                     modifier = Modifier
@@ -253,23 +266,31 @@ fun CompanyProfileView(
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            mainAxisSpacing = 8.dp,
-                            crossAxisSpacing = 8.dp
+                            mainAxisSpacing = 10.dp,
+                            crossAxisSpacing = 12.dp
                         ) {
-                            getCompanyProfileStatus.companyModel.company_tags.forEach { tagResponse ->
-                                Surface(
-                                    shape = RoundedCornerShape(20.dp),
-                                    color = Color.LightGray,
-                                    modifier = Modifier.padding(vertical = 4.dp)
+                            getCompanyProfileStatus.companyModel.company_tags.forEachIndexed { index, tag ->
+                                Box(
+                                    modifier = Modifier
+                                        .shadow(
+                                            elevation = 3.dp,
+                                            shape = RoundedCornerShape(24.dp),
+                                            clip = false
+                                        )
+                                        .background(
+                                            color = getTagColor(index),
+                                            shape = RoundedCornerShape(24.dp)
+                                        )
+                                        .padding(horizontal = 20.dp, vertical = 10.dp)
                                 ) {
                                     Text(
-                                        text = tagResponse.data.name,
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                        text = "# ${tag.name}",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Black
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color.White
                                     )
                                 }
                             }
