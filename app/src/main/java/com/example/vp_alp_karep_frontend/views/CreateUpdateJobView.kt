@@ -43,7 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vp_alp_karep_frontend.uiStates.JobTagStatusUIState
-import com.example.vp_alp_karep_frontend.uiStates.SingleJobStatusUIState
+import com.example.vp_alp_karep_frontend.uiStates.JobDetailStatusUIState
 import com.example.vp_alp_karep_frontend.viewModels.CreateUpdateJobViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -83,14 +83,14 @@ fun CreateUpdateJobView(
     // Handle job data loaded for update
     LaunchedEffect(getJobStatus) {
         when (getJobStatus) {
-            is SingleJobStatusUIState.Success -> {
+            is JobDetailStatusUIState.Success -> {
                 val job = getJobStatus.job
                 jobName = job.name
                 jobDescription = job.description ?: ""
                 selectedTagIds = job.tags.map { it.data.id }.toSet()
                 createUpdateJobViewModel.clearGetJobStatus()
             }
-            is SingleJobStatusUIState.Failed -> {
+            is JobDetailStatusUIState.Failed -> {
                 Toast.makeText(
                     context,
                     getJobStatus.errorMessage,
@@ -105,7 +105,7 @@ fun CreateUpdateJobView(
     // Handle create job status
     LaunchedEffect(createJobStatus) {
         when (createJobStatus) {
-            is SingleJobStatusUIState.Success -> {
+            is JobDetailStatusUIState.Success -> {
                 Toast.makeText(
                     context,
                     "Job berhasil dibuat",
@@ -114,7 +114,7 @@ fun CreateUpdateJobView(
                 createUpdateJobViewModel.clearCreateJobStatus()
                 onSuccess()
             }
-            is SingleJobStatusUIState.Failed -> {
+            is JobDetailStatusUIState.Failed -> {
                 isLoading = false
                 Toast.makeText(
                     context,
@@ -123,7 +123,7 @@ fun CreateUpdateJobView(
                 ).show()
                 createUpdateJobViewModel.clearCreateJobStatus()
             }
-            is SingleJobStatusUIState.Loading -> {
+            is JobDetailStatusUIState.Loading -> {
                 isLoading = true
             }
             else -> {
@@ -135,7 +135,7 @@ fun CreateUpdateJobView(
     // Handle update job status
     LaunchedEffect(updateJobStatus) {
         when (updateJobStatus) {
-            is SingleJobStatusUIState.Success -> {
+            is JobDetailStatusUIState.Success -> {
                 Toast.makeText(
                     context,
                     "Job berhasil diupdate",
@@ -144,7 +144,7 @@ fun CreateUpdateJobView(
                 createUpdateJobViewModel.clearUpdateJobStatus()
                 onSuccess()
             }
-            is SingleJobStatusUIState.Failed -> {
+            is JobDetailStatusUIState.Failed -> {
                 isLoading = false
                 Toast.makeText(
                     context,
@@ -153,7 +153,7 @@ fun CreateUpdateJobView(
                 ).show()
                 createUpdateJobViewModel.clearUpdateJobStatus()
             }
-            is SingleJobStatusUIState.Loading -> {
+            is JobDetailStatusUIState.Loading -> {
                 isLoading = true
             }
             else -> {

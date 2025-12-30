@@ -15,7 +15,7 @@ import com.example.vp_alp_karep_frontend.models.JobResponse
 import com.example.vp_alp_karep_frontend.models.JobTagsResponse
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.JobTagStatusUIState
-import com.example.vp_alp_karep_frontend.uiStates.SingleJobStatusUIState
+import com.example.vp_alp_karep_frontend.uiStates.JobDetailStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okio.IOException
@@ -31,18 +31,18 @@ class CreateUpdateJobViewModel(
     )
         private set
 
-    var getJobStatus: SingleJobStatusUIState by mutableStateOf(
-        SingleJobStatusUIState.Start
+    var getJobStatus: JobDetailStatusUIState by mutableStateOf(
+        JobDetailStatusUIState.Start
     )
         private set
 
-    var createJobStatus: SingleJobStatusUIState by mutableStateOf(
-        SingleJobStatusUIState.Start
+    var createJobStatus: JobDetailStatusUIState by mutableStateOf(
+        JobDetailStatusUIState.Start
     )
         private set
 
-    var updateJobStatus: SingleJobStatusUIState by mutableStateOf(
-        SingleJobStatusUIState.Start
+    var updateJobStatus: JobDetailStatusUIState by mutableStateOf(
+        JobDetailStatusUIState.Start
     )
         private set
 
@@ -102,7 +102,7 @@ class CreateUpdateJobViewModel(
 
     fun getJob(token: String, jobId: Int) {
         viewModelScope.launch {
-            getJobStatus = SingleJobStatusUIState.Loading
+            getJobStatus = JobDetailStatusUIState.Loading
 
             try {
                 val call = jobRepository.getJob(token, jobId)
@@ -113,7 +113,7 @@ class CreateUpdateJobViewModel(
                         res: Response<JobResponse>
                     ) {
                         if (res.isSuccessful) {
-                            getJobStatus = SingleJobStatusUIState.Success(
+                            getJobStatus = JobDetailStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -121,7 +121,7 @@ class CreateUpdateJobViewModel(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            getJobStatus = SingleJobStatusUIState.Failed(errorMessage.errors)
+                            getJobStatus = JobDetailStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -129,13 +129,13 @@ class CreateUpdateJobViewModel(
                         call: Call<JobResponse>,
                         t: Throwable
                     ) {
-                        getJobStatus = SingleJobStatusUIState.Failed(
+                        getJobStatus = JobDetailStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                getJobStatus = SingleJobStatusUIState.Failed(
+                getJobStatus = JobDetailStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
@@ -149,7 +149,7 @@ class CreateUpdateJobViewModel(
         tags: List<Int>
     ) {
         viewModelScope.launch {
-            createJobStatus = SingleJobStatusUIState.Loading
+            createJobStatus = JobDetailStatusUIState.Loading
 
             try {
                 val call = jobRepository.createJob(token, name, description, tags)
@@ -160,7 +160,7 @@ class CreateUpdateJobViewModel(
                         res: Response<JobResponse>
                     ) {
                         if (res.isSuccessful) {
-                            createJobStatus = SingleJobStatusUIState.Success(
+                            createJobStatus = JobDetailStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -168,7 +168,7 @@ class CreateUpdateJobViewModel(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            createJobStatus = SingleJobStatusUIState.Failed(errorMessage.errors)
+                            createJobStatus = JobDetailStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -176,13 +176,13 @@ class CreateUpdateJobViewModel(
                         call: Call<JobResponse>,
                         t: Throwable
                     ) {
-                        createJobStatus = SingleJobStatusUIState.Failed(
+                        createJobStatus = JobDetailStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                createJobStatus = SingleJobStatusUIState.Failed(
+                createJobStatus = JobDetailStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
@@ -197,7 +197,7 @@ class CreateUpdateJobViewModel(
         tags: List<Int>
     ) {
         viewModelScope.launch {
-            updateJobStatus = SingleJobStatusUIState.Loading
+            updateJobStatus = JobDetailStatusUIState.Loading
 
             try {
                 val call = jobRepository.updateJob(token, jobId, name, description, tags)
@@ -208,7 +208,7 @@ class CreateUpdateJobViewModel(
                         res: Response<JobResponse>
                     ) {
                         if (res.isSuccessful) {
-                            updateJobStatus = SingleJobStatusUIState.Success(
+                            updateJobStatus = JobDetailStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -216,7 +216,7 @@ class CreateUpdateJobViewModel(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            updateJobStatus = SingleJobStatusUIState.Failed(errorMessage.errors)
+                            updateJobStatus = JobDetailStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -224,13 +224,13 @@ class CreateUpdateJobViewModel(
                         call: Call<JobResponse>,
                         t: Throwable
                     ) {
-                        updateJobStatus = SingleJobStatusUIState.Failed(
+                        updateJobStatus = JobDetailStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                updateJobStatus = SingleJobStatusUIState.Failed(
+                updateJobStatus = JobDetailStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
@@ -238,15 +238,15 @@ class CreateUpdateJobViewModel(
     }
 
     fun clearCreateJobStatus() {
-        createJobStatus = SingleJobStatusUIState.Start
+        createJobStatus = JobDetailStatusUIState.Start
     }
 
     fun clearUpdateJobStatus() {
-        updateJobStatus = SingleJobStatusUIState.Start
+        updateJobStatus = JobDetailStatusUIState.Start
     }
 
     fun clearGetJobStatus() {
-        getJobStatus = SingleJobStatusUIState.Start
+        getJobStatus = JobDetailStatusUIState.Start
     }
 
     fun clearGetAllJobTagsStatus() {
