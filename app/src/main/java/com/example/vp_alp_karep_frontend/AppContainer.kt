@@ -6,11 +6,14 @@ import com.example.vp_alp_karep_frontend.repositories.ApplicationRepository
 import com.example.vp_alp_karep_frontend.repositories.ApplicationRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.JobRepository
+import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.NotificationRepository
 import com.example.vp_alp_karep_frontend.repositories.NotificationRepositoryInterface
 import com.example.vp_alp_karep_frontend.service.ApplicationService
 import com.example.vp_alp_karep_frontend.service.CompanyService
 import com.example.vp_alp_karep_frontend.service.NotificationService
+import com.example.vp_alp_karep_frontend.service.JobService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,6 +23,7 @@ interface AppContainerInterface {
     val companyRepository: CompanyRepositoryInterface
     val notificationRepository: NotificationRepositoryInterface
     val applicationRepository: ApplicationRepositoryInterface
+    val jobRepository: JobRepositoryInterface
 }
 
 class AppContainer (
@@ -46,6 +50,12 @@ class AppContainer (
         retrofit.create(ApplicationService::class.java)
     }
 
+    private val jobRetrofitService: JobService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(JobService::class.java)
+    }
+
     override val companyRepository: CompanyRepositoryInterface by lazy {
         CompanyRepository(companyRetrofitService)
     }
@@ -58,6 +68,9 @@ class AppContainer (
         ApplicationRepository(applicationRetrofitService)
     }
 
+    override val jobRepository: JobRepositoryInterface by lazy {
+        JobRepository(jobRetrofitService)
+    }
 
     private fun initRetrofit(): Retrofit {
         val logging = HttpLoggingInterceptor()

@@ -1,0 +1,267 @@
+package com.example.vp_alp_karep_frontend.viewModels
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.vp_alp_karep_frontend.KarepApplication
+import com.example.vp_alp_karep_frontend.models.ErrorModel
+import com.example.vp_alp_karep_frontend.models.JobResponse
+import com.example.vp_alp_karep_frontend.models.JobTagsResponse
+import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
+import com.example.vp_alp_karep_frontend.uiStates.JobTagStatusUIState
+import com.example.vp_alp_karep_frontend.uiStates.SingleJobStatusUIState
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
+import okio.IOException
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+class CreateUpdateJobViewModel(
+    private val jobRepository: JobRepositoryInterface
+): ViewModel() {
+    var getAllJobTagsStatus: JobTagStatusUIState by mutableStateOf(
+        JobTagStatusUIState.Start
+    )
+        private set
+
+    var getJobStatus: SingleJobStatusUIState by mutableStateOf(
+        SingleJobStatusUIState.Start
+    )
+        private set
+
+    var createJobStatus: SingleJobStatusUIState by mutableStateOf(
+        SingleJobStatusUIState.Start
+    )
+        private set
+
+    var updateJobStatus: SingleJobStatusUIState by mutableStateOf(
+        SingleJobStatusUIState.Start
+    )
+        private set
+
+    // Mode: "create" or "update"
+    var mode: String by mutableStateOf("create")
+        private set
+
+    var currentJobId: Int? by mutableStateOf(null)
+        private set
+
+    fun setMode(newMode: String, jobId: Int? = null) {
+        mode = newMode
+        currentJobId = jobId
+    }
+
+    fun getAllJobTags() {
+        viewModelScope.launch {
+            getAllJobTagsStatus = JobTagStatusUIState.Loading
+
+            try {
+                val call = jobRepository.getAllJobTags()
+
+                call.enqueue(object: Callback<JobTagsResponse> {
+                    override fun onResponse(
+                        call: Call<JobTagsResponse>,
+                        res: Response<JobTagsResponse>
+                    ) {
+                        if (res.isSuccessful) {
+                            getAllJobTagsStatus = JobTagStatusUIState.Success(
+                                res.body()!!.data
+                            )
+                        } else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            getAllJobTagsStatus = JobTagStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<JobTagsResponse>,
+                        t: Throwable
+                    ) {
+                        getAllJobTagsStatus = JobTagStatusUIState.Failed(
+                            t.localizedMessage ?: "Unknown error"
+                        )
+                    }
+                })
+            } catch (error: IOException) {
+                getAllJobTagsStatus = JobTagStatusUIState.Failed(
+                    error.localizedMessage ?: "Network error"
+                )
+            }
+        }
+    }
+
+    fun getJob(token: String, jobId: Int) {
+        viewModelScope.launch {
+            getJobStatus = SingleJobStatusUIState.Loading
+
+            try {
+                val call = jobRepository.getJob(token, jobId)
+
+                call.enqueue(object: Callback<JobResponse> {
+                    override fun onResponse(
+                        call: Call<JobResponse>,
+                        res: Response<JobResponse>
+                    ) {
+                        if (res.isSuccessful) {
+                            getJobStatus = SingleJobStatusUIState.Success(
+                                res.body()!!.data
+                            )
+                        } else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            getJobStatus = SingleJobStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<JobResponse>,
+                        t: Throwable
+                    ) {
+                        getJobStatus = SingleJobStatusUIState.Failed(
+                            t.localizedMessage ?: "Unknown error"
+                        )
+                    }
+                })
+            } catch (error: IOException) {
+                getJobStatus = SingleJobStatusUIState.Failed(
+                    error.localizedMessage ?: "Network error"
+                )
+            }
+        }
+    }
+
+    fun createJob(
+        token: String,
+        name: String,
+        description: String?,
+        tags: List<Int>
+    ) {
+        viewModelScope.launch {
+            createJobStatus = SingleJobStatusUIState.Loading
+
+            try {
+                val call = jobRepository.createJob(token, name, description, tags)
+
+                call.enqueue(object: Callback<JobResponse> {
+                    override fun onResponse(
+                        call: Call<JobResponse>,
+                        res: Response<JobResponse>
+                    ) {
+                        if (res.isSuccessful) {
+                            createJobStatus = SingleJobStatusUIState.Success(
+                                res.body()!!.data
+                            )
+                        } else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            createJobStatus = SingleJobStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<JobResponse>,
+                        t: Throwable
+                    ) {
+                        createJobStatus = SingleJobStatusUIState.Failed(
+                            t.localizedMessage ?: "Unknown error"
+                        )
+                    }
+                })
+            } catch (error: IOException) {
+                createJobStatus = SingleJobStatusUIState.Failed(
+                    error.localizedMessage ?: "Network error"
+                )
+            }
+        }
+    }
+
+    fun updateJob(
+        token: String,
+        jobId: Int,
+        name: String,
+        description: String?,
+        tags: List<Int>
+    ) {
+        viewModelScope.launch {
+            updateJobStatus = SingleJobStatusUIState.Loading
+
+            try {
+                val call = jobRepository.updateJob(token, jobId, name, description, tags)
+
+                call.enqueue(object: Callback<JobResponse> {
+                    override fun onResponse(
+                        call: Call<JobResponse>,
+                        res: Response<JobResponse>
+                    ) {
+                        if (res.isSuccessful) {
+                            updateJobStatus = SingleJobStatusUIState.Success(
+                                res.body()!!.data
+                            )
+                        } else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            updateJobStatus = SingleJobStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<JobResponse>,
+                        t: Throwable
+                    ) {
+                        updateJobStatus = SingleJobStatusUIState.Failed(
+                            t.localizedMessage ?: "Unknown error"
+                        )
+                    }
+                })
+            } catch (error: IOException) {
+                updateJobStatus = SingleJobStatusUIState.Failed(
+                    error.localizedMessage ?: "Network error"
+                )
+            }
+        }
+    }
+
+    fun clearCreateJobStatus() {
+        createJobStatus = SingleJobStatusUIState.Start
+    }
+
+    fun clearUpdateJobStatus() {
+        updateJobStatus = SingleJobStatusUIState.Start
+    }
+
+    fun clearGetJobStatus() {
+        getJobStatus = SingleJobStatusUIState.Start
+    }
+
+    fun clearGetAllJobTagsStatus() {
+        getAllJobTagsStatus = JobTagStatusUIState.Start
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as KarepApplication)
+                val jobRepository = application.container.jobRepository
+                CreateUpdateJobViewModel(
+                    jobRepository = jobRepository
+                )
+            }
+        }
+    }
+}

@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.vp_alp_karep_frontend.enums.PageEnums
 import com.example.vp_alp_karep_frontend.viewModels.ApplicationViewModel
 import com.example.vp_alp_karep_frontend.viewModels.CompanyViewModel
+import com.example.vp_alp_karep_frontend.viewModels.CreateUpdateJobViewModel
+import com.example.vp_alp_karep_frontend.viewModels.JobViewModel
 import com.example.vp_alp_karep_frontend.viewModels.NotificationViewModel
 import com.example.vp_alp_karep_frontend.viewModels.UpdateCompanyViewModel
 
@@ -19,7 +21,9 @@ fun KarepMain(
     companyViewModel: CompanyViewModel = viewModel(factory = CompanyViewModel.Factory),
     notificationViewModel: NotificationViewModel = viewModel(factory = NotificationViewModel.Factory),
     applicationViewModel: ApplicationViewModel = viewModel(factory = ApplicationViewModel.Factory),
-    updateCompanyViewModel: UpdateCompanyViewModel = viewModel(factory = UpdateCompanyViewModel.Factory)
+    updateCompanyViewModel: UpdateCompanyViewModel = viewModel(factory = UpdateCompanyViewModel.Factory),
+    jobViewModel: JobViewModel = viewModel(factory = JobViewModel.Factory),
+    createUpdateJobViewModel: CreateUpdateJobViewModel = viewModel(factory = CreateUpdateJobViewModel.Factory)
 ) {
     val localContext = LocalContext.current
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY1OTQ0OTM5LCJleHAiOjE3Njg1MzY5Mzl9.1H5FHXnxgUpfCl3o2h_oX54qmcizG-WOvg6ZDeILc1I"
@@ -50,7 +54,15 @@ fun KarepMain(
             )
         }
         composable(route = PageEnums.JobPosts.name) {
-
+            JobView(
+                jobViewModel = jobViewModel,
+                createUpdateJobViewModel = createUpdateJobViewModel,
+                token = token,
+                context = localContext,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable(route = PageEnums.ApplicationsManagement.name) {
             ApplicationView(
