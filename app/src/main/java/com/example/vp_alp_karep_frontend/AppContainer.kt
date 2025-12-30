@@ -6,12 +6,15 @@ import com.example.vp_alp_karep_frontend.repositories.ApplicationRepository
 import com.example.vp_alp_karep_frontend.repositories.ApplicationRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyTagRepository
+import com.example.vp_alp_karep_frontend.repositories.CompanyTagRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.JobRepository
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.NotificationRepository
 import com.example.vp_alp_karep_frontend.repositories.NotificationRepositoryInterface
 import com.example.vp_alp_karep_frontend.service.ApplicationService
 import com.example.vp_alp_karep_frontend.service.CompanyService
+import com.example.vp_alp_karep_frontend.service.CompanyTagService
 import com.example.vp_alp_karep_frontend.service.NotificationService
 import com.example.vp_alp_karep_frontend.service.JobService
 import okhttp3.OkHttpClient
@@ -24,6 +27,7 @@ interface AppContainerInterface {
     val notificationRepository: NotificationRepositoryInterface
     val applicationRepository: ApplicationRepositoryInterface
     val jobRepository: JobRepositoryInterface
+    val companyTagRepository: CompanyTagRepositoryInterface
 }
 
 class AppContainer (
@@ -56,6 +60,12 @@ class AppContainer (
         retrofit.create(JobService::class.java)
     }
 
+    private val companyTagRetrofitService: CompanyTagService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(CompanyTagService::class.java)
+    }
+
     override val companyRepository: CompanyRepositoryInterface by lazy {
         CompanyRepository(companyRetrofitService)
     }
@@ -70,6 +80,10 @@ class AppContainer (
 
     override val jobRepository: JobRepositoryInterface by lazy {
         JobRepository(jobRetrofitService)
+    }
+
+    override val companyTagRepository: CompanyTagRepositoryInterface by lazy {
+        CompanyTagRepository(companyTagRetrofitService)
     }
 
     private fun initRetrofit(): Retrofit {
