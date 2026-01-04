@@ -8,6 +8,7 @@ import retrofit2.Call
 
 interface CompanyTagRepositoryInterface {
     fun createCompanyToTags(
+        token: String,
         company_id: Int,
         tag_id: Int
     ): Call<GeneralResponseModel>
@@ -15,13 +16,16 @@ interface CompanyTagRepositoryInterface {
         token: String,
         tagId: Int
     ): Call<GeneralResponseModel>
-    fun getAllCompanyTags(): Call<CompanyTagsResponse>
+    fun getAllCompanyTags(
+        token: String
+    ): Call<CompanyTagsResponse>
 }
 
 class CompanyTagRepository(
     private val companyTagService: CompanyTagService
 ): CompanyTagRepositoryInterface {
     override fun createCompanyToTags(
+        token: String,
         company_id: Int,
         tag_id: Int
     ): Call<GeneralResponseModel> {
@@ -30,6 +34,7 @@ class CompanyTagRepository(
             tag_id = tag_id
         )
         return companyTagService.createCompanyToTags(
+            "Bearer ${token}",
             companyTagCreateRequest
         )
     }
@@ -44,8 +49,12 @@ class CompanyTagRepository(
         )
     }
 
-    override fun getAllCompanyTags(): Call<CompanyTagsResponse> {
-        return companyTagService.getAllCompanyTags()
+    override fun getAllCompanyTags(
+        token: String
+    ): Call<CompanyTagsResponse> {
+        return companyTagService.getAllCompanyTags(
+            "Bearer ${token}"
+        )
     }
 
 }

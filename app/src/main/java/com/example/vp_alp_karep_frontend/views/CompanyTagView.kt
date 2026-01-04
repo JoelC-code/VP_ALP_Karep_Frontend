@@ -59,7 +59,7 @@ fun CompanyTagView(
     var currentTags: List<CompanyTagsModel> = emptyList()
 
     LaunchedEffect(Unit) {
-        companyTagViewModel.getAllTags()
+        companyTagViewModel.getAllTags(token)
         companyTagViewModel.getCompanyProfile(token)
     }
 

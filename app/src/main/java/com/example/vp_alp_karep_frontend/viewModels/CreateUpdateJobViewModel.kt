@@ -58,12 +58,12 @@ class CreateUpdateJobViewModel(
         currentJobId = jobId
     }
 
-    fun getAllJobTags() {
+    fun getAllJobTags(token: String) {
         viewModelScope.launch {
             getAllJobTagsStatus = JobTagStatusUIState.Loading
 
             try {
-                val call = jobRepository.getAllJobTags()
+                val call = jobRepository.getAllJobTags(token)
 
                 call.enqueue(object: Callback<JobTagsResponse> {
                     override fun onResponse(

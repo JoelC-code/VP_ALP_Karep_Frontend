@@ -42,9 +42,9 @@ class CompanyTagViewModel(
     var companyId by mutableStateOf<Int>(0)
         private set
 
-    fun getAllTags() {
+    fun getAllTags(token: String) {
         getAllTagsStatus = CompanyTagStatusUIState.Loading
-        companyTagRepository.getAllCompanyTags().enqueue(object : Callback<CompanyTagsResponse> {
+        companyTagRepository.getAllCompanyTags(token).enqueue(object : Callback<CompanyTagsResponse> {
             override fun onResponse(
                 call: Call<CompanyTagsResponse>,
                 response: Response<CompanyTagsResponse>
@@ -145,7 +145,7 @@ class CompanyTagViewModel(
                             updateTagsStatus = StringDataStatusUIState.Success("Tags updated successfully")
                         } else {
                             // Start creating new tags
-                            createNewTags(toCreate, companyId)
+                            createNewTags(token, toCreate, companyId)
                         }
                     }
                 }
@@ -163,16 +163,16 @@ class CompanyTagViewModel(
 
         // If no tags to delete, directly create new tags
         if (toDelete.isEmpty() && toCreate.isNotEmpty()) {
-            createNewTags(toCreate, companyId)
+            createNewTags(token, toCreate, companyId)
         }
     }
 
-    private fun createNewTags(tagIds: Set<Int>, companyId: Int) {
+    private fun createNewTags(token: String, tagIds: Set<Int>, companyId: Int) {
         var createCount = 0
         var hasError = false
 
         tagIds.forEach { tagId ->
-            companyTagRepository.createCompanyToTags(companyId, tagId).enqueue(object : Callback<GeneralResponseModel> {
+            companyTagRepository.createCompanyToTags(token, companyId, tagId).enqueue(object : Callback<GeneralResponseModel> {
                 override fun onResponse(
                     call: Call<GeneralResponseModel>,
                     response: Response<GeneralResponseModel>

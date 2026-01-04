@@ -31,7 +31,9 @@ interface JobRepositoryInterface {
         description: String?,
         tags: List<Int> = emptyList()
     ): Call<JobResponse>
-    fun getAllJobTags(): Call<JobTagsResponse>
+    fun getAllJobTags(
+        token: String
+    ): Call<JobTagsResponse>
 }
 
 class JobRepository(
@@ -92,7 +94,11 @@ class JobRepository(
         )
     }
 
-    override fun getAllJobTags(): Call<JobTagsResponse> {
-        return jobService.getAllJobTags()
+    override fun getAllJobTags(
+        token: String
+    ): Call<JobTagsResponse> {
+        return jobService.getAllJobTags(
+            "Bearer ${token}",
+        )
     }
 }

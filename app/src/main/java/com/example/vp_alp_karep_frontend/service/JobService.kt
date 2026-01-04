@@ -46,5 +46,7 @@ interface JobService {
     ): Call<JobResponse>
 
     @GET("api/jobtag-list")
-    fun  getAllJobTags(): Call<JobTagsResponse>
+    fun  getAllJobTags(
+        @Header("Authorization") token: String,
+    ): Call<JobTagsResponse>
 }

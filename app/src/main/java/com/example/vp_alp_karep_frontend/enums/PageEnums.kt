@@ -5,9 +5,6 @@ enum class PageEnums() {
     UpdateCompanyProfile,
     JobPosts,
     ApplicationsManagement,
-
     TagsManagement,
-
-
     Notifications
 }

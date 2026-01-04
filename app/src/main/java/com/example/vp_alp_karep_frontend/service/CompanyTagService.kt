@@ -14,6 +14,7 @@ import retrofit2.http.Path
 interface CompanyTagService {
     @POST("api/companies/profile/tags")
     fun createCompanyToTags(
+        @Header("Authorization") token: String,
         @Body companyTagsModel: CompanyTagCreateRequest
     ): Call<GeneralResponseModel>
 
@@ -24,5 +25,7 @@ interface CompanyTagService {
     ): Call<GeneralResponseModel>
 
     @GET("api/company-tags")
-    fun getAllCompanyTags(): Call<CompanyTagsResponse>
+    fun getAllCompanyTags(
+        @Header("Authorization") token: String,
+    ): Call<CompanyTagsResponse>
 }

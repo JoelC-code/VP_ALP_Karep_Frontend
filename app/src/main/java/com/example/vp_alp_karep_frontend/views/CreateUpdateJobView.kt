@@ -70,7 +70,7 @@ fun CreateUpdateJobView(
 
     // Load tags on start
     LaunchedEffect(Unit) {
-        createUpdateJobViewModel.getAllJobTags()
+        createUpdateJobViewModel.getAllJobTags(token)
     }
 
     // Load job data if in update mode
