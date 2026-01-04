@@ -63,6 +63,22 @@ fun KarepMain(
                 context = localContext,
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onNavigateToCreateUpdate = {
+                    navController.navigate(PageEnums.CreateUpdateJob.name)
+                }
+            )
+        }
+        composable(route = PageEnums.CreateUpdateJob.name) {
+            CreateUpdateJobView(
+                createUpdateJobViewModel = createUpdateJobViewModel,
+                token = token,
+                context = localContext,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSuccess = {
+                    navController.popBackStack()
                 }
             )
         }
