@@ -22,13 +22,5 @@ data class JobCreateUpdateRequest (
     val tags: List<Int> = emptyList(),
 )
 
-data class JobTagsResponse (
-    val data: List<JobTagModel> = emptyList()
-)
-
-data class JobTagModel (
-    val id: Int = 0,
-    val name: String = "",
-)
 
 

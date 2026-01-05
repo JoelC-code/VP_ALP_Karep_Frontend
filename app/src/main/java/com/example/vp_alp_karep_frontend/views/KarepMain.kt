@@ -28,7 +28,7 @@ fun KarepMain(
     companyTagViewModel: CompanyTagViewModel = viewModel(factory = CompanyTagViewModel.Factory)
 ) {
     val localContext = LocalContext.current
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY1OTQ0OTM5LCJleHAiOjE3Njg1MzY5Mzl9.1H5FHXnxgUpfCl3o2h_oX54qmcizG-WOvg6ZDeILc1I"
+    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY3NjAzNzg5LCJleHAiOjE3NzAxOTU3ODl9.kHVEOVtUyVCPqZ1Z5SSp3LWPUlh1w2tsFW9umDL5TR4"
 
     NavHost(
         navController = navController,
