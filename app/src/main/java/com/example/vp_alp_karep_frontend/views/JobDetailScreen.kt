@@ -1,5 +1,6 @@
 package com.example.vp_alp_karep_frontend.views
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.vp_alp_karep_frontend.uiStates.ApplicationActionUiState
@@ -26,6 +28,7 @@ fun JobDetailScreen(
     viewModel: JobDetailViewModel = viewModel(factory = JobDetailViewModel.Factory),
     viewModelApp: ApplicationActionViewModel = viewModel(factory = ApplicationActionViewModel.Factory)
 ) {
+    val context = LocalContext.current
     val state by viewModelApp.applyState.collectAsState()
     val jobState by viewModel.uiStates.collectAsState()
 
@@ -38,6 +41,8 @@ fun JobDetailScreen(
             viewModel.resetState()
         }
     }
+
+
 
     when(jobState) {
         is JobDetailUiStates.start -> {}
@@ -72,11 +77,23 @@ fun JobDetailScreen(
     }
 
     LaunchedEffect(state) {
-        if(state is ApplicationActionUiState.Success) {
-            viewModel.resetState()
-            navController.navigate("my-application") {
-                popUpTo("job_detail/$jobId") {inclusive = true}
+        when (state) {
+            is ApplicationActionUiState.Success -> {
+                viewModel.resetState()
+                navController.navigate("my-application") {
+                    popUpTo("job_detail/$jobId") { inclusive = true }
+                }
             }
+
+            is ApplicationActionUiState.Error -> {
+                Toast.makeText(
+                    context,
+                    "Cannot apply to this job: ${(state as ApplicationActionUiState.Error).message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            else -> {}
         }
     }
 }

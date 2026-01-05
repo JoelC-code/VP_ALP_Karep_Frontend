@@ -55,7 +55,6 @@ fun JobContent(state: JobListUiStates, onJobClick: (Int) -> Unit ) {
         }
 
         is JobListUiStates.Success -> {
-            Log.d("JOB_DETAIL", "jobId = $onJobClick")
             JobCard(jobs = state.jobs, onJobClick = { job -> onJobClick(job)})
         }
     }
