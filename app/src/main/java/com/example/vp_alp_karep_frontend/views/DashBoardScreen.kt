@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.vp_alp_karep_frontend.routes.MainNavGraph
 
@@ -34,13 +33,6 @@ fun DashBoardScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text("Email: $email")
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { mainNavController.navigate("job-tags") }
-        ) {
-            Text("Job Tags")
-        }
 
         Button(
             modifier = Modifier.fillMaxWidth(),

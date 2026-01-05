@@ -8,12 +8,9 @@ import com.example.vp_alp_karep_frontend.repositories.AuthFakeRepository
 import com.example.vp_alp_karep_frontend.repositories.AuthRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.JobRepository
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
-import com.example.vp_alp_karep_frontend.repositories.JobTagRepository
-import com.example.vp_alp_karep_frontend.repositories.JobTagRepositoryInterface
 import com.example.vp_alp_karep_frontend.service.ApplicationServices
 import com.example.vp_alp_karep_frontend.service.AuthFakeAPI
 import com.example.vp_alp_karep_frontend.service.JobServices
-import com.example.vp_alp_karep_frontend.service.JobTagService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -22,7 +19,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 interface AppContainerInterface {
     val authRepository: AuthRepositoryInterface
     val jobRepository: JobRepositoryInterface
-    val jobTagRepository: JobTagRepositoryInterface
     val applicationRepository: ApplicationRepositoryInterface
 }
 
@@ -36,7 +32,7 @@ class AppContainer (
         4. Ganti "192.168.x.xx" pada backendURL dengan IPv4 Address yang ditemukan
         -- IP Address UC bisa beda beda jadi cari sendiri dan ganti sebelum presentasi! --
      */
-    private val backendURL = "http://10.0.89.206:3000/"
+    private val backendURL = "http://192.168.6.207:3000/"
 
 
     //RETROFIT SERVICE
@@ -44,11 +40,6 @@ class AppContainer (
     private val AuthAPI: AuthFakeAPI by lazy {
         val retrofit = initRetrofit()
         retrofit.create(AuthFakeAPI::class.java)
-    }
-
-    private val JobTagAPI: JobTagService by lazy {
-        val retrofit = initRetrofit()
-        retrofit.create(JobTagService::class.java)
     }
 
     private val JobAPI: JobServices by lazy {
@@ -65,10 +56,6 @@ class AppContainer (
     //TO Repository
     override val authRepository: AuthRepositoryInterface by lazy {
         AuthFakeRepository(AuthAPI)
-    }
-
-    override val jobTagRepository: JobTagRepositoryInterface by lazy {
-        JobTagRepository(JobTagAPI)
     }
 
     override val jobRepository: JobRepositoryInterface by lazy {

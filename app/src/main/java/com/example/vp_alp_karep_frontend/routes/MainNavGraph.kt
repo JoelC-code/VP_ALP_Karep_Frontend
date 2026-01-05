@@ -22,7 +22,6 @@ import com.example.vp_alp_karep_frontend.enums.JobListStatus
 import com.example.vp_alp_karep_frontend.views.ApplicationScreen
 import com.example.vp_alp_karep_frontend.views.JobDetailScreen
 import com.example.vp_alp_karep_frontend.views.JobListScreen
-import com.example.vp_alp_karep_frontend.views.JobTagListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,15 +74,9 @@ fun BackTopAppBar(
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "job-tags",
+                startDestination = "jobs",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable("job-tags") {
-                    JobTagListScreen(
-                        token = token
-                    )
-                }
-
                 composable("jobs") {
                     JobListScreen(token = token, navController, JobListStatus.ALL)
                 }
