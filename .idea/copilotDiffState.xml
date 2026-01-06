@@ -3,24 +3,6 @@
   <component name="CopilotDiffPersistence">
     <option name="pendingDiffs">
       <map>
-        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/models/JobModel.kt">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/models/JobModel.kt" />
-              <option name="originalContent" value="package com.example.vp_alp_karep_frontend.models&#10;&#10;data class JobResponse (&#10;    val data: JobModel&#10;)&#10;&#10;data class JobListResponse (&#10;    val data: List&lt;JobModel&gt; = emptyList()&#10;)&#10;&#10;data class JobModel (&#10;    val id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;    val description: String? = &quot;&quot;,&#10;    val company_id: Int = 0,&#10;    val tags: List&lt;JobTagResponse&gt; = emptyList(),&#10;)&#10;&#10;data class JobCreateUpdateRequest (&#10;    val name: String,&#10;    val description: String?,&#10;    val tags: List&lt;Int&gt; = emptyList(),&#10;)&#10;&#10;data class JobTagsResponse (&#10;    val data: List&lt;JobTagModel&gt; = emptyList()&#10;)&#10;&#10;data class JobTagModel (&#10;    val id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;)&#10;&#10;&#10;" />
-              <option name="updatedContent" value="package com.example.vp_alp_karep_frontend.models&#10;&#10;data class JobResponse (&#10;    val data: JobModel&#10;)&#10;&#10;data class JobListResponse (&#10;    val data: List&lt;JobModel&gt; = emptyList()&#10;)&#10;&#10;data class JobModel (&#10;    val id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;    val description: String? = &quot;&quot;,&#10;    val company_id: Int = 0,&#10;    val tags: List&lt;JobTagResponse&gt; = emptyList(),&#10;)&#10;&#10;data class JobCreateUpdateRequest (&#10;    val name: String,&#10;    val description: String?,&#10;    val tags: List&lt;Int&gt; = emptyList(),&#10;)&#10;&#10;&#10;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/models/JobTagModel.kt">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/models/JobTagModel.kt" />
-              <option name="originalContent" value="package com.example.vp_alp_karep_frontend.models&#10;&#10;data class JobTagResponse (&#10;    val data: JobTagModel&#10;)&#10;&#10;data class JobTagModel(&#10;    val id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;)&#10;" />
-              <option name="updatedContent" value="package com.example.vp_alp_karep_frontend.models&#10;&#10;data class JobTagResponse (&#10;    val data: JobTagModel&#10;)&#10;&#10;data class JobTagsResponse (&#10;    val data: List&lt;JobTagModel&gt; = emptyList()&#10;)&#10;&#10;data class JobTagModel(&#10;    val id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;)&#10;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/uiStates/ApplicationStatusUIState.kt">
           <value>
             <PendingDiffInfo>

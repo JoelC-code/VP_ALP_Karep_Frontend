@@ -1,6 +1,7 @@
 package com.example.vp_alp_karep_frontend.views
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -28,7 +29,7 @@ fun KarepMain(
     companyTagViewModel: CompanyTagViewModel = viewModel(factory = CompanyTagViewModel.Factory)
 ) {
     val localContext = LocalContext.current
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY3NjAzNzg5LCJleHAiOjE3NzAxOTU3ODl9.kHVEOVtUyVCPqZ1Z5SSp3LWPUlh1w2tsFW9umDL5TR4"
+    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzY3Njg0Njc3LCJleHAiOjE3NzAyNzY2Nzd9.R7xrgud_RXyHFeLYnseLOKRHl1ATt2iiAIzedcRAm8Y"
 
     NavHost(
         navController = navController,

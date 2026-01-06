@@ -1,7 +1,7 @@
 package com.example.vp_alp_karep_frontend.models
 
 data class JobResponse (
-    val data: JobModel
+    val data: JobModel?
 )
 
 data class JobListResponse (

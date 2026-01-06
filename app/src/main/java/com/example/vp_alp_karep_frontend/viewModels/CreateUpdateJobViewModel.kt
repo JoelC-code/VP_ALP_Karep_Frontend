@@ -53,9 +53,34 @@ class CreateUpdateJobViewModel(
     var currentJobId: Int? by mutableStateOf(null)
         private set
 
+    var selectedTagIds by mutableStateOf<Set<Int>>(emptySet())
+        private set
+
     fun setMode(newMode: String, jobId: Int? = null) {
         mode = newMode
         currentJobId = jobId
+        // Clear all statuses when mode changes
+        clearAllStatuses()
+        // Clear selected tags
+        selectedTagIds = emptySet()
+    }
+
+    fun toggleTagSelection(tagId: Int) {
+        selectedTagIds = if (selectedTagIds.contains(tagId)) {
+            selectedTagIds - tagId
+        } else {
+            selectedTagIds + tagId
+        }
+    }
+
+    fun setSelectedTags(tagIds: Set<Int>) {
+        selectedTagIds = tagIds
+    }
+
+    fun clearAllStatuses() {
+        createJobStatus = JobDetailStatusUIState.Start
+        updateJobStatus = JobDetailStatusUIState.Start
+        getJobStatus = JobDetailStatusUIState.Start
     }
 
     fun getAllJobTags(token: String) {
@@ -113,9 +138,14 @@ class CreateUpdateJobViewModel(
                         res: Response<JobResponse>
                     ) {
                         if (res.isSuccessful) {
-                            getJobStatus = JobDetailStatusUIState.Success(
-                                res.body()!!.data
-                            )
+                            val job = res.body()?.data
+                            if (job != null) {
+                                // Set selected tags from job data
+                                selectedTagIds = job.tags.mapNotNull { tagResponse -> tagResponse.data?.id }.toSet()
+                                getJobStatus = JobDetailStatusUIState.Success(job)
+                            } else {
+                                getJobStatus = JobDetailStatusUIState.Failed("Job data is null")
+                            }
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
@@ -160,9 +190,13 @@ class CreateUpdateJobViewModel(
                         res: Response<JobResponse>
                     ) {
                         if (res.isSuccessful) {
-                            createJobStatus = JobDetailStatusUIState.Success(
-                                res.body()!!.data
-                            )
+                            val job = res.body()?.data
+                            if (job != null) {
+                                createJobStatus = JobDetailStatusUIState.Success(job)
+                            } else {
+                                // Backend doesn't return data, but operation succeeded
+                                createJobStatus = JobDetailStatusUIState.SuccessNoData
+                            }
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
@@ -208,9 +242,13 @@ class CreateUpdateJobViewModel(
                         res: Response<JobResponse>
                     ) {
                         if (res.isSuccessful) {
-                            updateJobStatus = JobDetailStatusUIState.Success(
-                                res.body()!!.data
-                            )
+                            val job = res.body()?.data
+                            if (job != null) {
+                                updateJobStatus = JobDetailStatusUIState.Success(job)
+                            } else {
+                                // Backend doesn't return data, but operation succeeded
+                                updateJobStatus = JobDetailStatusUIState.SuccessNoData
+                            }
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),

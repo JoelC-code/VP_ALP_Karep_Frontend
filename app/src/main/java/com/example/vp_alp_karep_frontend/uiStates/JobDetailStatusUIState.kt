@@ -6,6 +6,7 @@ sealed interface JobDetailStatusUIState {
     data class Success(
         val job: JobModel
     ): JobDetailStatusUIState
+    object SuccessNoData: JobDetailStatusUIState  // For create/update that don't return data
     object Loading: JobDetailStatusUIState
     object Start: JobDetailStatusUIState
     data class Failed(

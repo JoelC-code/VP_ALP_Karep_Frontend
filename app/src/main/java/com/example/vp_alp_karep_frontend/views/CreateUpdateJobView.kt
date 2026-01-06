@@ -62,15 +62,30 @@ fun CreateUpdateJobView(
     val getJobStatus = createUpdateJobViewModel.getJobStatus
     val createJobStatus = createUpdateJobViewModel.createJobStatus
     val updateJobStatus = createUpdateJobViewModel.updateJobStatus
+    val selectedTagIds = createUpdateJobViewModel.selectedTagIds
 
     var jobName by remember { mutableStateOf("") }
     var jobDescription by remember { mutableStateOf("") }
-    var selectedTagIds by remember { mutableStateOf(setOf<Int>()) }
     var isLoading by remember { mutableStateOf(false) }
+    var isDataLoaded by remember { mutableStateOf(false) }
 
     // Load tags on start
     LaunchedEffect(Unit) {
         createUpdateJobViewModel.getAllJobTags(token)
+    }
+
+    // Reset form when mode or jobId changes
+    LaunchedEffect(mode, currentJobId) {
+        if (mode == "create") {
+            jobName = ""
+            jobDescription = ""
+            isDataLoaded = true
+        } else {
+            isDataLoaded = false
+            // Reset fields before loading new data
+            jobName = ""
+            jobDescription = ""
+        }
     }
 
     // Load job data if in update mode
@@ -87,7 +102,8 @@ fun CreateUpdateJobView(
                 val job = getJobStatus.job
                 jobName = job.name
                 jobDescription = job.description ?: ""
-                selectedTagIds = job.tags.map { it.data.id }.toSet()
+                // selectedTagIds is already set in ViewModel
+                isDataLoaded = true
                 createUpdateJobViewModel.clearGetJobStatus()
             }
             is JobDetailStatusUIState.Failed -> {
@@ -96,6 +112,7 @@ fun CreateUpdateJobView(
                     getJobStatus.errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
+                isDataLoaded = true
                 createUpdateJobViewModel.clearGetJobStatus()
             }
             else -> {}
@@ -106,20 +123,34 @@ fun CreateUpdateJobView(
     LaunchedEffect(createJobStatus) {
         when (createJobStatus) {
             is JobDetailStatusUIState.Success -> {
+                createUpdateJobViewModel.clearCreateJobStatus()
                 Toast.makeText(
                     context,
                     "Job berhasil dibuat",
                     Toast.LENGTH_SHORT
                 ).show()
+                onSuccess()
+            }
+            is JobDetailStatusUIState.SuccessNoData -> {
                 createUpdateJobViewModel.clearCreateJobStatus()
+                Toast.makeText(
+                    context,
+                    "Job berhasil dibuat",
+                    Toast.LENGTH_SHORT
+                ).show()
                 onSuccess()
             }
             is JobDetailStatusUIState.Failed -> {
                 isLoading = false
+                val errorMsg = createJobStatus.errorMessage
                 Toast.makeText(
                     context,
-                    createJobStatus.errorMessage,
-                    Toast.LENGTH_SHORT
+                    if (errorMsg.contains("job_id")) {
+                        "Error: Backend database constraint issue. Please check backend logs."
+                    } else {
+                        errorMsg
+                    },
+                    Toast.LENGTH_LONG
                 ).show()
                 createUpdateJobViewModel.clearCreateJobStatus()
             }
@@ -136,12 +167,21 @@ fun CreateUpdateJobView(
     LaunchedEffect(updateJobStatus) {
         when (updateJobStatus) {
             is JobDetailStatusUIState.Success -> {
+                createUpdateJobViewModel.clearUpdateJobStatus()
                 Toast.makeText(
                     context,
                     "Job berhasil diupdate",
                     Toast.LENGTH_SHORT
                 ).show()
+                onSuccess()
+            }
+            is JobDetailStatusUIState.SuccessNoData -> {
                 createUpdateJobViewModel.clearUpdateJobStatus()
+                Toast.makeText(
+                    context,
+                    "Job berhasil diupdate",
+                    Toast.LENGTH_SHORT
+                ).show()
                 onSuccess()
             }
             is JobDetailStatusUIState.Failed -> {
@@ -292,11 +332,7 @@ fun CreateUpdateJobView(
                                         shape = RoundedCornerShape(20.dp)
                                     )
                                     .clickable {
-                                        selectedTagIds = if (isSelected) {
-                                            selectedTagIds - tag.id
-                                        } else {
-                                            selectedTagIds + tag.id
-                                        }
+                                        createUpdateJobViewModel.toggleTagSelection(tag.id)
                                     }
                                     .padding(horizontal = 16.dp, vertical = 10.dp)
                             ) {

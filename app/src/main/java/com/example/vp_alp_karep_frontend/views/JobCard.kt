@@ -84,17 +84,19 @@ fun JobCard(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         jobModel.tags.forEach { tag ->
-                            Text(
-                                text = tag.data.name,
-                                fontSize = 12.sp,
-                                color = Color.White,
-                                modifier = Modifier
-                                    .background(
-                                        color = Color(0xFF4CAF50),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
-                            )
+                            tag.data?.let { tagData ->
+                                Text(
+                                    text = tagData.name,
+                                    fontSize = 12.sp,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .background(
+                                            color = Color(0xFF4CAF50),
+                                            shape = RoundedCornerShape(16.dp)
+                                        )
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
                 }
