@@ -9,10 +9,10 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.todolistapp.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.KarepApplication
-import com.example.vp_alp_karep_frontend.models.ApplicationResponse
 import com.example.vp_alp_karep_frontend.models.ErrorModel
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
+import com.example.vp_alp_karep_frontend.models.GetApplicationResponse
 import com.example.vp_alp_karep_frontend.repositories.ApplicationRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.ApplicationStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.StringDataStatusUIState
@@ -47,10 +47,10 @@ class ApplicationViewModel(
             try {
                 val call = applicationRepository.getApplications(token)
 
-                call.enqueue(object: Callback<ApplicationResponse>{
+                call.enqueue(object: Callback<GetApplicationResponse>{
                     override fun onResponse(
-                        call: Call<ApplicationResponse?>,
-                        res: Response<ApplicationResponse?>
+                        call: Call<GetApplicationResponse?>,
+                        res: Response<GetApplicationResponse?>
                     ) {
                         if (res.isSuccessful) {
                             getApplicationsStatus = ApplicationStatusUIState.Success(
@@ -69,7 +69,7 @@ class ApplicationViewModel(
                     }
 
                     override fun onFailure(
-                        call: Call<ApplicationResponse?>,
+                        call: Call<GetApplicationResponse?>,
                         t: Throwable
                     ) {
                         getApplicationsStatus = ApplicationStatusUIState.Failed(t.localizedMessage ?: "Unknown error")

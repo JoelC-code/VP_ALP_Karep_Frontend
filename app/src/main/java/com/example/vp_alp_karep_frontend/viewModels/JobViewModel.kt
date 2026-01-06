@@ -9,9 +9,9 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.todolistapp.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.ErrorModel
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.models.JobListResponse
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.JobStatusUIState

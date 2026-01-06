@@ -13,10 +13,10 @@ import com.example.vp_alp_karep_frontend.repositories.NotificationRepositoryInte
 import com.example.vp_alp_karep_frontend.uiStates.NotificationStatusUIState
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import com.example.todolistapp.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.AllNotificationsResponse
 import com.example.vp_alp_karep_frontend.models.ErrorModel
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.uiStates.StringDataStatusUIState
 import com.google.gson.Gson
 import okio.IOException

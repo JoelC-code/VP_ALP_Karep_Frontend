@@ -1,8 +1,8 @@
 package com.example.vp_alp_karep_frontend.repositories
 
-import com.example.todolistapp.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.models.CompanyTagCreateRequest
 import com.example.vp_alp_karep_frontend.models.CompanyTagsResponse
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.service.CompanyTagService
 import retrofit2.Call
 

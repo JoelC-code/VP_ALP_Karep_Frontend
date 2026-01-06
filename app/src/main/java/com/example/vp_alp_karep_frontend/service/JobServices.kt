@@ -1,7 +1,7 @@
 package com.example.vp_alp_karep_frontend.service
 
-import com.example.vp_alp_karep_frontend.models.GetAllJobsResponse
-import com.example.vp_alp_karep_frontend.models.GetJobResponse
+import com.example.vp_alp_karep_frontend.models.JobListResponse
+import com.example.vp_alp_karep_frontend.models.JobResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -13,22 +13,22 @@ interface JobServices {
     @GET("api/job-list")
     fun getAllJobs(
         @Header("Authorization") token: String
-    ): Call<GetAllJobsResponse>
+    ): Call<JobListResponse>
 
     @GET("api/job/{jobId}")
     fun getJob(
         @Header("Authorization") token: String,
         @Path("jobId") jobId: Int
-    ): Call<GetJobResponse>
+    ): Call<JobResponse>
 
     @GET("api/job-list/job")
     fun searchJobs(
         @Header("Authorization") token: String,
         @Query("search") search: String?
-    ): Call<GetAllJobsResponse>
+    ): Call<JobListResponse>
 
     @GET("api/job-list/company")
     fun jobByCompany(
         @Header("Authorization") token: String,
-    ): Call<GetAllJobsResponse>
+    ): Call<JobListResponse>
 }

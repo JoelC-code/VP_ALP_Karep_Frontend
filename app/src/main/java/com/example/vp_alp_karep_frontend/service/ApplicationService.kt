@@ -1,7 +1,7 @@
 package com.example.vp_alp_karep_frontend.service
 
-import com.example.todolistapp.models.GeneralResponseModel
-import com.example.vp_alp_karep_frontend.models.ApplicationResponse
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
+import com.example.vp_alp_karep_frontend.models.GetApplicationResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -12,13 +12,13 @@ interface ApplicationService {
     @GET("api/companies/applications")
     fun getApplications(
         @Header("Authorization") token: String
-    ): Call<ApplicationResponse>
+    ): Call<GetApplicationResponse>
 
     @GET("api/companies/jobs/{jobId}/applications/")
     fun getApplicationsByJob(
         @Header("Authorization") token: String,
         @Path("jobId") jobId: Int
-    ): Call<ApplicationResponse>
+    ): Call<GetApplicationResponse>
 
     @PUT("api/companies/applications/{applicationId}/accept")
     fun acceptApplication(

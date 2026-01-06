@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.NavHostController
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.uiStates.CompanyStatusUIState
 import kotlinx.coroutines.launch
@@ -56,11 +55,11 @@ class CompanyViewModel(
                     }
 
                     override fun onFailure(call: Call<CompanyResponse?>, t: Throwable) {
-                        getCompanyProfileStatus = CompanyStatusUIState.Failed(t.localizedMessage)
+                        getCompanyProfileStatus = CompanyStatusUIState.Failed(t.localizedMessage!!)
                     }
                 })
             } catch (error: IOException) {
-                getCompanyProfileStatus = CompanyStatusUIState.Failed(error.localizedMessage)
+                getCompanyProfileStatus = CompanyStatusUIState.Failed(error.localizedMessage!!)
             }
         }
     }

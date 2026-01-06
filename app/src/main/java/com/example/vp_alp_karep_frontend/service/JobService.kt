@@ -1,6 +1,6 @@
 package com.example.vp_alp_karep_frontend.service
 
-import com.example.todolistapp.models.GeneralResponseModel
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.models.JobCreateUpdateRequest
 import com.example.vp_alp_karep_frontend.models.JobListResponse
 import com.example.vp_alp_karep_frontend.models.JobResponse

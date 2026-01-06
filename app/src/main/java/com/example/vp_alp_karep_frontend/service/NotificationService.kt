@@ -1,7 +1,7 @@
 package com.example.vp_alp_karep_frontend.service
 
-import com.example.todolistapp.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.models.AllNotificationsResponse
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
 import retrofit2.Call
 import retrofit2.http.DELETE
 import retrofit2.http.GET

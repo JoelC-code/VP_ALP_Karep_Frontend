@@ -9,11 +9,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.todolistapp.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.CompanyResponse
 import com.example.vp_alp_karep_frontend.models.CompanyTagsModel
 import com.example.vp_alp_karep_frontend.models.CompanyTagsResponse
+import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.CompanyTagRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.CompanyTagStatusUIState

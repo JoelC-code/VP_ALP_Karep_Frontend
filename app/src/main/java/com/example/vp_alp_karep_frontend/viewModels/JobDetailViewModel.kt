@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.vp_alp_karep_frontend.KarepApplication
-import com.example.vp_alp_karep_frontend.models.GetJobResponse
-import com.example.vp_alp_karep_frontend.repositories.JobRepository
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import com.example.vp_alp_karep_frontend.models.JobResponse
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.JobDetailUiStates
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,8 +28,8 @@ class JobDetailViewModel(
 
         val call = repository.getJob(token, jobId)
 
-        call.enqueue(object : Callback<GetJobResponse> {
-            override fun onResponse(call: Call<GetJobResponse?>, response: Response<GetJobResponse?>) {
+        call.enqueue(object : Callback<JobResponse> {
+            override fun onResponse(call: Call<JobResponse?>, response: Response<JobResponse?>) {
                 if(response.isSuccessful && response.body() != null) {
                     _uiStates.value = JobDetailUiStates.Success(response.body()!!.data)
                 } else {
@@ -38,7 +37,7 @@ class JobDetailViewModel(
                 }
             }
 
-            override fun onFailure(call: Call<GetJobResponse?>, t: Throwable) {
+            override fun onFailure(call: Call<JobResponse?>, t: Throwable) {
                 _uiStates.value = JobDetailUiStates.Error(t.localizedMessage ?: "Network Error")
             }
         })
