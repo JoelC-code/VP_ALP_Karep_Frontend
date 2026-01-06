@@ -13,7 +13,7 @@ import com.example.todolistapp.models.GeneralResponseCompanyModel
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ErrorModel
 import com.example.vp_alp_karep_frontend.models.CompanyModels.JobListResponse
-import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.JobStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.StringDataStatusUIState
 import com.google.gson.Gson
@@ -24,7 +24,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class JobViewModel(
-    private val jobRepository: JobRepositoryInterface
+    private val jobRepository: JobCompanyRepositoryInterface
 ): ViewModel() {
     var getAllJobsStatus: JobStatusUIState by mutableStateOf(
         JobStatusUIState.Start

@@ -7,7 +7,7 @@ import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyR
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyTagRepository
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyTagRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepository
-import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.NotificationRepository
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.NotificationRepositoryInterface
 import com.example.vp_alp_karep_frontend.service.CompanyService.ApplicationService
@@ -24,7 +24,7 @@ interface AppCompanyContainerInterface {
     val companyRepository: CompanyRepositoryInterface
     val notificationRepository: NotificationRepositoryInterface
     val applicationRepository: ApplicationCompanyRepositoryInterface
-    val jobRepository: JobRepositoryInterface
+    val jobRepository: JobCompanyRepositoryInterface
     val companyTagRepository: CompanyTagRepositoryInterface
 }
 
@@ -76,7 +76,7 @@ private  val backendURL = "http://10.0.162.147:3000/"
         ApplicationCompanyRepository(applicationRetrofitService)
     }
 
-    override val jobRepository: JobRepositoryInterface by lazy {
+    override val jobRepository: JobCompanyRepositoryInterface by lazy {
         JobCompanyRepository(jobRetrofitService)
     }
 
