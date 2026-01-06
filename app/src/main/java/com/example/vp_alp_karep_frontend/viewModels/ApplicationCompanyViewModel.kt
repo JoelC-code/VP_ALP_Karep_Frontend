@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.ErrorModel
 import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
+import com.example.vp_alp_karep_frontend.models.GetAllApplicationResponse
 import com.example.vp_alp_karep_frontend.models.GetApplicationResponse
 import com.example.vp_alp_karep_frontend.repositories.ApplicationRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.ApplicationStatusUIState
@@ -23,7 +24,7 @@ import okio.IOException
 import retrofit2.Call
 import retrofit2.Response
 
-class ApplicationViewModel(
+class ApplicationCompanyViewModel(
     private val applicationRepository: ApplicationRepositoryInterface
 ): ViewModel() {
     var getApplicationsStatus: ApplicationStatusUIState by mutableStateOf(
@@ -47,10 +48,10 @@ class ApplicationViewModel(
             try {
                 val call = applicationRepository.getApplications(token)
 
-                call.enqueue(object: Callback<GetApplicationResponse>{
+                call.enqueue(object: Callback<GetAllApplicationResponse>{
                     override fun onResponse(
-                        call: Call<GetApplicationResponse?>,
-                        res: Response<GetApplicationResponse?>
+                        call: Call<GetAllApplicationResponse?>,
+                        res: Response<GetAllApplicationResponse?>
                     ) {
                         if (res.isSuccessful) {
                             getApplicationsStatus = ApplicationStatusUIState.Success(
@@ -69,7 +70,7 @@ class ApplicationViewModel(
                     }
 
                     override fun onFailure(
-                        call: Call<GetApplicationResponse?>,
+                        call: Call<GetAllApplicationResponse?>,
                         t: Throwable
                     ) {
                         getApplicationsStatus = ApplicationStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
@@ -192,7 +193,7 @@ class ApplicationViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
                 val applicationRRepository = application.container.applicationRepository
-                ApplicationViewModel(applicationRRepository)
+                ApplicationCompanyViewModel(applicationRRepository)
             }
         }
     }

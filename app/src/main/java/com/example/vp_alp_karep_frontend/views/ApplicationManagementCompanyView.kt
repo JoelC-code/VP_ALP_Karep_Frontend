@@ -37,12 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vp_alp_karep_frontend.uiStates.ApplicationStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.StringDataStatusUIState
-import com.example.vp_alp_karep_frontend.viewModels.ApplicationViewModel
+import com.example.vp_alp_karep_frontend.viewModels.ApplicationCompanyViewModel
 
 @Composable
 fun ApplicationManagementCompanyView(
     modifier: Modifier = Modifier,
-    applicationViewModel: ApplicationViewModel,
+    applicationViewModel: ApplicationCompanyViewModel,
     token: String,
     context: Context,
     onBackClick: () -> Unit = {}

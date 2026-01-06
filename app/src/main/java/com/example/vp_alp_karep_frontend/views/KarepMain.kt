@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.vp_alp_karep_frontend.enums.PageEnums
-import com.example.vp_alp_karep_frontend.viewModels.ApplicationViewModel
+import com.example.vp_alp_karep_frontend.viewModels.ApplicationCompanyViewModel
 import com.example.vp_alp_karep_frontend.viewModels.CompanyTagViewModel
 import com.example.vp_alp_karep_frontend.viewModels.CompanyViewModel
 import com.example.vp_alp_karep_frontend.viewModels.CreateUpdateJobViewModel
@@ -21,7 +21,7 @@ fun KarepMain(
     navController: NavHostController = rememberNavController(),
     companyViewModel: CompanyViewModel = viewModel(factory = CompanyViewModel.Factory),
     notificationViewModel: NotificationViewModel = viewModel(factory = NotificationViewModel.Factory),
-    applicationViewModel: ApplicationViewModel = viewModel(factory = ApplicationViewModel.Factory),
+    applicationViewModel: ApplicationCompanyViewModel = viewModel(factory = ApplicationCompanyViewModel.Factory),
     updateCompanyViewModel: UpdateCompanyViewModel = viewModel(factory = UpdateCompanyViewModel.Factory),
     jobViewModel: JobViewModel = viewModel(factory = JobViewModel.Factory),
     createUpdateJobViewModel: CreateUpdateJobViewModel = viewModel(factory = CreateUpdateJobViewModel.Factory),

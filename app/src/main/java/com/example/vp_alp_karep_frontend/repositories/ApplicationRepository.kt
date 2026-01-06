@@ -1,16 +1,16 @@
 package com.example.vp_alp_karep_frontend.repositories
 
 import com.example.vp_alp_karep_frontend.models.GeneralResponseModel
-import com.example.vp_alp_karep_frontend.models.GetApplicationResponse
+import com.example.vp_alp_karep_frontend.models.GetAllApplicationResponse
 import com.example.vp_alp_karep_frontend.service.ApplicationService
 import retrofit2.Call
 
 interface ApplicationRepositoryInterface {
-    fun getApplications(token: String): Call<GetApplicationResponse>
+    fun getApplications(token: String): Call<GetAllApplicationResponse>
     fun getApplicationsByJob(
         token: String,
         jobId: Int
-    ): Call<GetApplicationResponse>
+    ): Call<GetAllApplicationResponse>
     fun acceptApplication(
         token: String,
         applicationId: Int
@@ -24,14 +24,14 @@ interface ApplicationRepositoryInterface {
 class ApplicationRepository(
     private val applicationService: ApplicationService
 ): ApplicationRepositoryInterface {
-    override fun getApplications(token: String): Call<GetApplicationResponse> {
+    override fun getApplications(token: String): Call<GetAllApplicationResponse> {
         return applicationService.getApplications("Bearer ${token}")
     }
 
     override fun getApplicationsByJob(
         token: String,
         jobId: Int
-    ): Call<GetApplicationResponse> {
+    ): Call<GetAllApplicationResponse> {
         return applicationService.getApplicationsByJob("Bearer ${token}", jobId)
     }
 
