@@ -191,7 +191,7 @@ class ApplicationViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
-                val applicationRRepository = application.container.applicationRepository
+                val applicationRRepository = application.container.applicationCompanyRepository
                 ApplicationViewModel(applicationRRepository)
             }
         }

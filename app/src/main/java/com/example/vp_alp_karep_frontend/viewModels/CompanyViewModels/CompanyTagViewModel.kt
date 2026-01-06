@@ -209,7 +209,7 @@ class CompanyTagViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
-                val companyTagRepository = application.container.companyTagRepository
+                val companyTagRepository = application.container.companyTagCompanyRepository
                 val companyRepository = application.container.companyRepository
                 CompanyTagViewModel(
                     companyTagRepository = companyTagRepository,

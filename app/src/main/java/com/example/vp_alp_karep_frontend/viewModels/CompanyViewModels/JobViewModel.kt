@@ -132,7 +132,7 @@ class JobViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
-                val jobRepository = application.container.jobRepository
+                val jobRepository = application.container.jobCompanyRepository
                 JobViewModel(
                     jobRepository = jobRepository
                 )

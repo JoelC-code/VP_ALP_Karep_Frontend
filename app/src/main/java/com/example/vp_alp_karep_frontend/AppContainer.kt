@@ -6,10 +6,25 @@ import com.example.vp_alp_karep_frontend.repositories.ApplicationRepository
 import com.example.vp_alp_karep_frontend.repositories.ApplicationRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.AuthFakeRepository
 import com.example.vp_alp_karep_frontend.repositories.AuthRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.ApplicationCompanyRepository
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.ApplicationCompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyRepository
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyTagRepository
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyTagRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepository
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.NotificationRepository
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.NotificationRepositoryInterface
 import com.example.vp_alp_karep_frontend.repositories.JobRepository
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
 import com.example.vp_alp_karep_frontend.service.ApplicationServices
 import com.example.vp_alp_karep_frontend.service.AuthFakeAPI
+import com.example.vp_alp_karep_frontend.service.CompanyService.ApplicationService
+import com.example.vp_alp_karep_frontend.service.CompanyService.CompanyService
+import com.example.vp_alp_karep_frontend.service.CompanyService.CompanyTagService
+import com.example.vp_alp_karep_frontend.service.CompanyService.JobCompanyService
+import com.example.vp_alp_karep_frontend.service.CompanyService.NotificationService
 import com.example.vp_alp_karep_frontend.service.JobServices
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,6 +35,11 @@ interface AppContainerInterface {
     val authRepository: AuthRepositoryInterface
     val jobRepository: JobRepositoryInterface
     val applicationRepository: ApplicationRepositoryInterface
+    val companyRepository: CompanyRepositoryInterface
+    val notificationRepository: NotificationRepositoryInterface
+    val applicationCompanyRepository: ApplicationCompanyRepositoryInterface
+    val jobCompanyRepository: JobCompanyRepositoryInterface
+    val companyTagCompanyRepository: CompanyTagRepositoryInterface
 }
 
 class AppContainer (
@@ -64,6 +84,57 @@ class AppContainer (
 
     override val applicationRepository: ApplicationRepositoryInterface by lazy {
         ApplicationRepository(ApplicationAPI)
+    }
+
+    // Company Repositories
+    private val companyRetrofitService: CompanyService by lazy {
+        val  retrofit = initRetrofit()
+
+        retrofit.create(CompanyService::class.java)
+    }
+
+    private val notificationRetrofitService: NotificationService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(NotificationService::class.java)
+    }
+
+    private val applicationRetrofitService: ApplicationService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(ApplicationService::class.java)
+    }
+
+    private val jobRetrofitService: JobCompanyService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(JobCompanyService::class.java)
+    }
+
+    private val companyTagRetrofitService: CompanyTagService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(CompanyTagService::class.java)
+    }
+
+    override val companyRepository: CompanyRepositoryInterface by lazy {
+        CompanyRepository(companyRetrofitService)
+    }
+
+    override val notificationRepository: NotificationRepositoryInterface by lazy {
+        NotificationRepository(notificationRetrofitService)
+    }
+
+    override val applicationCompanyRepository: ApplicationCompanyRepositoryInterface by lazy {
+        ApplicationCompanyRepository(applicationRetrofitService)
+    }
+
+    override val jobCompanyRepository: JobCompanyRepositoryInterface by lazy {
+        JobCompanyRepository(jobRetrofitService)
+    }
+
+    override val companyTagCompanyRepository: CompanyTagRepositoryInterface by lazy {
+        CompanyTagRepository(companyTagRetrofitService)
     }
 
     //Init Retrofit + AuthInterceptor untuk ngambil token dari DataStore
