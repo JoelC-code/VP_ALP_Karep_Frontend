@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.vp_alp_karep_frontend.models.ApplicationModel
 
 @Composable
-fun ApplicationCard(
+fun ApplicationCompanyCard(
     applicationModel: ApplicationModel,
     modifier: Modifier = Modifier,
     onAccept: () -> Unit = {},
@@ -62,7 +62,7 @@ fun ApplicationCard(
                     )
 
                     Text(
-                        text = "User ID: ${applicationModel.user_id}",
+                        text = "User ID: ${applicationModel.userId}",
                         fontSize = 14.sp,
                         color = Color.DarkGray
                     )
@@ -78,10 +78,10 @@ fun ApplicationCard(
                     }
                 }
 
-                StatusBadge(status = applicationModel.status)
+                StatusBadge(status = applicationModel.status.name)
             }
 
-            when (applicationModel.status.lowercase()) {
+            when (applicationModel.status.name.lowercase()) {
                 "pending" -> {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(

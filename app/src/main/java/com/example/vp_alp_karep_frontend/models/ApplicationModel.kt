@@ -13,7 +13,7 @@ data class ApplicationModel (
 )
 
 data class GetAllApplicationResponse (
-    val data: List<ApplicationModel>
+    val data: List<ApplicationModel> = emptyList()
 )
 
 data class GetApplicationResponse(

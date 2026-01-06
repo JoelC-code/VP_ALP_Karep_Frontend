@@ -1,7 +1,6 @@
 package com.example.vp_alp_karep_frontend.views
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -57,7 +56,7 @@ fun KarepMain(
             )
         }
         composable(route = PageEnums.JobPosts.name) {
-            JobView(
+            JobCompanyView(
                 jobViewModel = jobViewModel,
                 createUpdateJobViewModel = createUpdateJobViewModel,
                 token = token,
@@ -84,7 +83,7 @@ fun KarepMain(
             )
         }
         composable(route = PageEnums.ApplicationsManagement.name) {
-            ApplicationView(
+            ApplicationManagementCompanyView(
                 applicationViewModel = applicationViewModel,
                 token = token,
                 context = localContext,

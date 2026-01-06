@@ -40,7 +40,7 @@ import com.example.vp_alp_karep_frontend.uiStates.StringDataStatusUIState
 import com.example.vp_alp_karep_frontend.viewModels.ApplicationViewModel
 
 @Composable
-fun ApplicationView(
+fun ApplicationManagementCompanyView(
     modifier: Modifier = Modifier,
     applicationViewModel: ApplicationViewModel,
     token: String,
@@ -148,7 +148,7 @@ fun ApplicationView(
         when (getApplicationsStatus) {
             is ApplicationStatusUIState.Success -> {
                 val filteredApplications = getApplicationsStatus.applications.filter {
-                    it.status.lowercase().trim() == tabs[selectedTabIndex].lowercase().trim()
+                    it.status.name.lowercase().trim() == tabs[selectedTabIndex].lowercase().trim()
                 }
 
 
@@ -159,7 +159,7 @@ fun ApplicationView(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(filteredApplications.size) { index ->
-                            ApplicationCard(
+                            ApplicationCompanyCard(
                                 applicationModel = filteredApplications[index],
                                 onAccept = {
                                     applicationViewModel.acceptApplication(

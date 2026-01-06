@@ -39,7 +39,7 @@ import com.example.vp_alp_karep_frontend.viewModels.CreateUpdateJobViewModel
 import com.example.vp_alp_karep_frontend.viewModels.JobViewModel
 
 @Composable
-fun JobView(
+fun JobCompanyView(
     modifier: Modifier = Modifier,
     jobViewModel: JobViewModel,
     createUpdateJobViewModel: CreateUpdateJobViewModel,
