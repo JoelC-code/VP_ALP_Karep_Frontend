@@ -13,7 +13,7 @@ import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ErrorModel
 import com.example.vp_alp_karep_frontend.models.CompanyModels.JobResponse
 import com.example.vp_alp_karep_frontend.models.CompanyModels.JobTagsResponse
-import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepositoryInterface
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.JobTagStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.JobDetailStatusUIState
 import com.google.gson.Gson
@@ -24,7 +24,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CreateUpdateJobViewModel(
-    private val jobRepository: JobRepositoryInterface
+    private val jobRepository: JobCompanyRepositoryInterface
 ): ViewModel() {
     var getAllJobTagsStatus: JobTagStatusUIState by mutableStateOf(
         JobTagStatusUIState.Start
