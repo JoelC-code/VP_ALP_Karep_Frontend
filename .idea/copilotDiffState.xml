@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/views/login_view_new.kt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/vp_alp_karep_frontend/views/login_view_new.kt" />
+              <option name="originalContent" value="&#10;" />
+              <option name="updatedContent" value="package com.example.vp_alp_karep_frontend.views&#10;&#10;// TEMPORARY FILE - PLEASE DELETE THIS FILE MANUALLY&#10;// This file should be deleted&#10;// Use login_view.kt instead&#10;&#13;&#10;&#13;&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
