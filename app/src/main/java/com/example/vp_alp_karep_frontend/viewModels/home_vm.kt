@@ -28,7 +28,7 @@ class HomeViewModel(
     private fun loadUserName() {
         viewModelScope.launch {
             // TODO: Load username from profile or token
-            _uiState.value = _uiState.value.copy(userName = "Jason")
+            _uiState.value = _uiState.value.copy(userName = loginRepository.getUsername().toString())
         }
     }
 
