@@ -893,7 +893,7 @@ fun ModernExperienceSection(viewModel: ExperienceViewModel, isEditMode: Boolean)
             }
             uiState.experiences.isEmpty() -> {
                 EmptyStateCard(
-                    icon = Icons.Outlined.Business,
+                    icon = Icons.Default.Business,
                     title = "No experience added",
                     description = "Add your work experience to enhance your profile"
                 )
