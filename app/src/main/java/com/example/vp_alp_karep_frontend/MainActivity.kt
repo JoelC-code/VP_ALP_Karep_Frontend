@@ -20,13 +20,7 @@ class MainActivity : ComponentActivity() {
             enableEdgeToEdge()
             setContent {
                 VP_ALP_Karep_FrontendTheme {
-                    val navController = rememberNavController()
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        AppNavigation(
-                            navController = navController,
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
+                    AppNavGraph()
                 }
             }
         } catch (e: Exception) {
