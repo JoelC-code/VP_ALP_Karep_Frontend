@@ -11,10 +11,10 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class KarepApplication: Application() {
-    lateinit var container: AppContainer
+    lateinit var container: AppTestContainer
 
     override fun onCreate() {
         super.onCreate()
-        container = AppContainer(dataStore)
+        container = AppTestContainer(dataStore)
     }
 }

@@ -31,7 +31,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-interface AppContainerInterface {
+interface AppTestContainerInterface {
     val authRepository: AuthRepositoryInterface
     val jobRepository: JobRepositoryInterface
     val applicationRepository: ApplicationRepositoryInterface
@@ -42,9 +42,9 @@ interface AppContainerInterface {
     val companyTagCompanyRepository: CompanyTagRepositoryInterface
 }
 
-class AppContainer (
+class AppTestContainer (
     private val dataStore: DataStore<Preferences>
-): AppContainerInterface {
+): AppTestContainerInterface {
     /*IPaddress di cari dengan cara
         1. Buka cmd
         2. Ketik "ipconfig"
