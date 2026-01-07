@@ -5,9 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.viewModels.ExperienceViewModel
 import com.example.vp_alp_karep_frontend.viewModels.HomeViewModel
@@ -15,6 +17,7 @@ import com.example.vp_alp_karep_frontend.viewModels.LoginViewModel
 import com.example.vp_alp_karep_frontend.viewModels.RegisterViewModel
 import com.example.vp_alp_karep_frontend.viewModels.UserProfileViewModel
 import com.example.vp_alp_karep_frontend.viewModels.ViewModelFactory
+import com.example.vp_alp_karep_frontend.views.JobDetailScreen
 import com.example.vp_alp_karep_frontend.views.LoginView
 import com.example.vp_alp_karep_frontend.views.MainScreen
 import com.example.vp_alp_karep_frontend.views.RegisterView
@@ -78,12 +81,21 @@ fun AppNavigation(
             )
         }
 
-        composable(Screen.Main.route) {
+        composable(route = Screen.Main.route + "?tab={tab}",
+            arguments = listOf(
+                navArgument("tab") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) { backStackEntry -> val tab = backStackEntry.arguments?.getInt("tab") ?: 0
             val homeViewModel: HomeViewModel = viewModel(factory = viewModelFactory)
             val profileViewModel: UserProfileViewModel = viewModel(factory = viewModelFactory)
             val achievementViewModel: com.example.vp_alp_karep_frontend.viewModels.AchievementViewModel = viewModel(factory = viewModelFactory)
             val experienceViewModel: ExperienceViewModel = viewModel(factory = viewModelFactory)
             MainScreen(
+                navController = navController,
+                startTab = tab,
                 homeViewModel = homeViewModel,
                 profileViewModel = profileViewModel,
                 achievementViewModel = achievementViewModel,
@@ -94,6 +106,18 @@ fun AppNavigation(
                     }
                 }
             )
+        }
+
+        composable(
+            "job_detail/{jobId}", arguments = listOf(
+                navArgument("jobId") { type = NavType.IntType }
+            )) { backStackEntry ->
+            val jobId = backStackEntry.arguments?.getInt("jobId")
+            if (jobId == null) {
+                navController.popBackStack()
+                return@composable
+            }
+            JobDetailScreen(jobId, navController)
         }
     }
 }

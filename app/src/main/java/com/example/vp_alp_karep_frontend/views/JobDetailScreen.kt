@@ -21,9 +21,7 @@ import com.example.vp_alp_karep_frontend.viewModels.JobDetailViewModel
 
 @Composable
 fun JobDetailScreen(
-    token: String,
     jobId: Int,
-    canApply: Boolean,
     navController: NavHostController,
     viewModel: JobDetailViewModel = viewModel(factory = JobDetailViewModel.Factory),
     viewModelApp: ApplicationActionViewModel = viewModel(factory = ApplicationActionViewModel.Factory)
@@ -32,8 +30,8 @@ fun JobDetailScreen(
     val state by viewModelApp.applyState.collectAsState()
     val jobState by viewModel.uiStates.collectAsState()
 
-    LaunchedEffect(jobId, token) {
-        viewModel.loadJobDetail(token, jobId)
+    LaunchedEffect(jobId) {
+        viewModel.loadJobDetail(jobId)
     }
 
     DisposableEffect(Unit) {
@@ -41,8 +39,6 @@ fun JobDetailScreen(
             viewModel.resetState()
         }
     }
-
-
 
     when(jobState) {
         is JobDetailUiStates.start -> {}
@@ -66,9 +62,8 @@ fun JobDetailScreen(
             JobDetailContent(
                 job = (jobState as JobDetailUiStates.Success).job,
                 onApplyClick = {
-                   viewModelApp.applyJob(token, jobId)
+                   viewModelApp.applyJob(jobId)
                 },
-                canApply = canApply,
                 onBack = {
                     navController.popBackStack()
                 }
@@ -80,8 +75,9 @@ fun JobDetailScreen(
         when (state) {
             is ApplicationActionUiState.Success -> {
                 viewModel.resetState()
-                navController.navigate("my-application") {
-                    popUpTo("job_detail/$jobId") { inclusive = true }
+                navController.navigate("main?tab=2"){
+                    popUpTo("main") {inclusive = false}
+                    launchSingleTop = true
                 }
             }
 

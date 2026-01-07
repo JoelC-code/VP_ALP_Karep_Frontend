@@ -17,13 +17,12 @@ import com.example.vp_alp_karep_frontend.views.templates.ApplicationCards
 
 @Composable
 fun ApplicationScreen(
-    token: String,
     viewModel: ApplicationListViewModel = viewModel(factory = ApplicationListViewModel.Factory)
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(token) {
-        viewModel.loadApplications(token)
+    LaunchedEffect(Unit) {
+        viewModel.loadApplications()
     }
 
     DisposableEffect(Unit) {
@@ -65,10 +64,10 @@ fun ApplicationScreen(
             }
             ApplicationCards(
                 onCancel = { id ->
-                    viewModel.cancelApplication(token, id)
+                    viewModel.cancelApplication(id)
                 },
                 onDelete = { id ->
-                    viewModel.deleteApplication(token, id)
+                    viewModel.deleteApplication(id)
                 },
                 applications = (state as ApplicationListUiStates.Success).applications
             )

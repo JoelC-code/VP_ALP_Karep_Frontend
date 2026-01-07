@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.vp_alp_karep_frontend.enums.JobListStatus
 import com.example.vp_alp_karep_frontend.viewModels.HomeViewModel
 import com.example.vp_alp_karep_frontend.viewModels.UserProfileViewModel
 
@@ -26,20 +28,22 @@ sealed class BottomNavItem(
     val label: String
 ) {
     object Home : BottomNavItem("home", Icons.Default.Home, "Beranda")
-    object Saved : BottomNavItem("saved", Icons.Default.FavoriteBorder, "Aktivitas")
-    object Career : BottomNavItem("career", Icons.Default.Star, "Karier")
+    object Saved : BottomNavItem("saved", Icons.Default.Work, "Job Seek")
+    object Career : BottomNavItem("career", Icons.Default.Inbox, "Application")
     object Profile : BottomNavItem("profile", Icons.Default.Person, "Profil")
 }
 
 @Composable
 fun MainScreen(
+    navController: NavHostController,
+    startTab: Int = 0,
     homeViewModel: HomeViewModel,
     profileViewModel: UserProfileViewModel,
     achievementViewModel: com.example.vp_alp_karep_frontend.viewModels.AchievementViewModel,
     experienceViewModel: com.example.vp_alp_karep_frontend.viewModels.ExperienceViewModel,
     onLogout: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableStateOf(startTab) }
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Saved,
@@ -91,10 +95,10 @@ fun MainScreen(
             when (selectedTab) {
                 0 -> HomeView(
                     viewModel = homeViewModel,
-                    userName = "Jason"
+                    userName = "User"
                 )
-                1 -> SavedJobsView()
-                2 -> CareerView()
+                1 -> JobListScreen(navController, JobListStatus.ALL)
+                2 -> ApplicationScreen()
                 3 -> UserProfileViewNew(
                     viewModel = profileViewModel,
                     achievementViewModel = achievementViewModel,

@@ -9,24 +9,31 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.GetAllJobsResponse
 import com.example.vp_alp_karep_frontend.repositories.JobRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.LoginRegistRepository
 import com.example.vp_alp_karep_frontend.uiStates.JobListUiStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class JobListViewModel(
-    private val repository: JobRepositoryInterface
+    private val repository: JobRepositoryInterface,
+    private val loginRepository: LoginRegistRepository
 ): ViewModel() {
     private val _uiStates = MutableStateFlow<JobListUiStates>(JobListUiStates.Start)
     val uiStates: StateFlow<JobListUiStates> = _uiStates
 
-    fun loadJobsAll(token: String) {
+    fun loadJobsAll() {
         if(_uiStates.value is JobListUiStates.Loading) return
 
         viewModelScope.launch {
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _uiStates.value = JobListUiStates.Error("Token not found or dead")
+                return@launch
+            }
             _uiStates.value = JobListUiStates.Loading
 
             val call = repository.getAllJobs(token)
@@ -52,11 +59,16 @@ class JobListViewModel(
         }
     }
 
-    fun loadJobsOfCompany(token: String) {
+    fun loadJobsOfCompany() {
         if(_uiStates.value is JobListUiStates.Loading) return
 
         viewModelScope.launch {
             _uiStates.value = JobListUiStates.Loading
+
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _uiStates.value = JobListUiStates.Error("Token not found or dead")
+                return@launch
+            }
 
             val call = repository.jobByCompany(token)
             call.enqueue(object : Callback<GetAllJobsResponse>{
@@ -80,30 +92,38 @@ class JobListViewModel(
         }
     }
 
-    fun loadJobsOnSearch(token: String, search: String? = null) {
-        _uiStates.value = JobListUiStates.Loading
-        val call = if(search.isNullOrBlank()) {
-            repository.getAllJobs(token)
-        } else {
-            repository.searchJobs(token, search)
-        }
+    fun loadJobsOnSearch(search: String? = null) {
+        viewModelScope.launch {
+            val token = loginRepository.getAuthToken().firstOrNull() ?:
+            run { _uiStates.value =
+                JobListUiStates.Error("Token not found or dead")
+                return@launch
+            }
+            _uiStates.value = JobListUiStates.Loading
+            val call = if (search.isNullOrBlank()) {
+                repository.getAllJobs(token)
+            } else {
+                repository.searchJobs(token, search)
+            }
 
-        call.enqueue(object : Callback<GetAllJobsResponse> {
-            override fun onResponse(
-                call: Call<GetAllJobsResponse?>,
-                response: Response<GetAllJobsResponse?>
-            ) {
-                if(response.isSuccessful) {
-                    _uiStates.value = JobListUiStates.Success(response.body()?.data ?: emptyList())
-                } else {
-                    _uiStates.value = JobListUiStates.Error("Error ${response.code()}")
+            call.enqueue(object : Callback<GetAllJobsResponse> {
+                override fun onResponse(
+                    call: Call<GetAllJobsResponse?>,
+                    response: Response<GetAllJobsResponse?>
+                ) {
+                    if (response.isSuccessful) {
+                        _uiStates.value =
+                            JobListUiStates.Success(response.body()?.data ?: emptyList())
+                    } else {
+                        _uiStates.value = JobListUiStates.Error("Error ${response.code()}")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<GetAllJobsResponse?>, t: Throwable) {
-                _uiStates.value = JobListUiStates.Error(t.localizedMessage ?: "Network Error")
-            }
-        })
+                override fun onFailure(call: Call<GetAllJobsResponse?>, t: Throwable) {
+                    _uiStates.value = JobListUiStates.Error(t.localizedMessage ?: "Network Error")
+                }
+            })
+        }
     }
 
     fun resetState() {
@@ -115,7 +135,8 @@ class JobListViewModel(
             initializer {
                 val app = this[APPLICATION_KEY] as KarepApplication
                 val repository = app.container.jobRepository
-                JobListViewModel(repository)
+                val logRepo = app.container.loginRegistRepository
+                JobListViewModel(repository, logRepo)
             }
         }
     }

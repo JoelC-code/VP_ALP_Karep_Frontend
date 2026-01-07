@@ -26,7 +26,6 @@ import com.example.vp_alp_karep_frontend.models.JobTagModel
 @Composable
 fun JobDetailContent(
     job: JobModel,
-    canApply: Boolean,
     onApplyClick: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -81,14 +80,12 @@ fun JobDetailContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        if(canApply) {
             Button(
                 onClick = onApplyClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Apply Job")
             }
-        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -120,7 +117,6 @@ fun JobDetailContentPreview() {
             job = fakeJob,
             onApplyClick = {},
             onBack = {},
-            canApply = false
         )
     }
 }

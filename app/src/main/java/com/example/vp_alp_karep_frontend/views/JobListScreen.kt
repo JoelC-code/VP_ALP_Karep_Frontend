@@ -11,7 +11,6 @@ import com.example.vp_alp_karep_frontend.viewModels.JobListViewModel
 
 @Composable
 fun JobListScreen(
-    token: String,
     navController: NavHostController,
     startMode: JobListStatus,
     viewModel: JobListViewModel = viewModel(factory = JobListViewModel.Factory)
@@ -19,10 +18,10 @@ fun JobListScreen(
     var mode by remember { mutableStateOf(startMode) }
     val state by viewModel.uiStates.collectAsState()
 
-    LaunchedEffect(mode, token) {
+    LaunchedEffect(mode) {
         when(mode) {
-            JobListStatus.ALL -> viewModel.loadJobsAll(token)
-            JobListStatus.COMPANY -> viewModel.loadJobsOfCompany(token)
+            JobListStatus.ALL -> viewModel.loadJobsAll()
+            JobListStatus.COMPANY -> viewModel.loadJobsOfCompany()
             JobListStatus.SEARCH -> Unit
         }
     }
@@ -38,10 +37,10 @@ fun JobListScreen(
             JobTopBar(
                 onSearch = { search ->
                     mode = JobListStatus.SEARCH
-                    viewModel.loadJobsOnSearch(token, search)
+                    viewModel.loadJobsOnSearch(search)
                 },
                 onShowAll = {
-                    viewModel.loadJobsAll(token)
+                    viewModel.loadJobsAll()
                 }
             )
         }
