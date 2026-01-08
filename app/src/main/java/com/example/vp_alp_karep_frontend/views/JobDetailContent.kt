@@ -1,5 +1,6 @@
 package com.example.vp_alp_karep_frontend.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -26,13 +28,21 @@ import androidx.compose.ui.unit.dp
 import com.example.vp_alp_karep_frontend.models.JobModel
 import com.example.vp_alp_karep_frontend.models.JobTagModel
 
+private val PrimaryTeal = Color(0xFF1A4D56)      // Balanced teal
+private val AccentGold = Color(0xFFD4AF37)       // Brighter gold
+private val LightGold = Color(0xFFF0E5C9)        // Softer light gold
+private val DarkTeal = Color(0xFF0F2F35)         // Soft dark teal
+private val BackgroundDark = Color(0xFF0A2026)   // Comfortable dark background
+private val CardBackground = Color(0xFF1E3A41)   // Balanced card background
+private val SecondaryTeal = Color(0xFF2A5F69)
+
 @Composable
 fun JobDetailContent(
     job: JobModel,
     onApplyClick: () -> Unit,
     onBack: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(16.dp).background(color = CardBackground, shape = RoundedCornerShape(8.dp))) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -40,9 +50,34 @@ fun JobDetailContent(
         ) {
             Text(
                 text = job.name,
-                style = MaterialTheme.typography.headlineSmall,
+                color = AccentGold,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                job.tags.forEach { tag ->
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                shape = RoundedCornerShape(12.dp),
+                                color = Color.White.copy(alpha = 0.1f)
+                            )
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "• ${tag.name}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -56,36 +91,14 @@ fun JobDetailContent(
 
             Text(
                 text = job.description,
+                color = Color.White,
                 style = MaterialTheme.typography.titleMedium
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                job.tags.forEach { tag ->
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                shape = RoundedCornerShape(12.dp),
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(Color(0xFF42A5F5), Color(0xFF1E88E5))
-                                )
-                            )
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            text = tag.name,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.White
-                        )
-                    }
-                }
-            }
-
             Spacer(modifier = Modifier.height(32.dp))
+
         }
 
         Column(
@@ -96,18 +109,27 @@ fun JobDetailContent(
         ) {
             Button(
                 onClick = onApplyClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AccentGold,
+                    contentColor = DarkTeal
+                )
             ) {
-                Text("Apply Job")
+                Text("Apply Pekerjaan")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedButton(
                 onClick = onBack,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = CardBackground,
+                    contentColor = AccentGold
+                ),
+                border = BorderStroke(1.dp, AccentGold)
             ) {
-                Text("Back")
+                Text("Kembali")
             }
         }
     }

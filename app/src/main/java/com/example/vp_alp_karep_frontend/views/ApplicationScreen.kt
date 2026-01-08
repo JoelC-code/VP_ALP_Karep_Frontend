@@ -112,7 +112,7 @@ fun ApplicationScreen(
                 }
                 Column {
                     Text(
-                        text = "Your Applications",
+                        text = "Aplikasi anda",
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         color = Color.White,
                         modifier = Modifier

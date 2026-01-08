@@ -28,8 +28,8 @@ sealed class BottomNavItem(
     val label: String
 ) {
     object Home : BottomNavItem("home", Icons.Default.Home, "Beranda")
-    object Saved : BottomNavItem("saved", Icons.Default.Work, "Job Seek")
-    object Career : BottomNavItem("career", Icons.Default.Inbox, "Application")
+    object Saved : BottomNavItem("saved", Icons.Default.Work, "Pencarian")
+    object Career : BottomNavItem("career", Icons.Default.Inbox, "Aplikasi")
     object Profile : BottomNavItem("profile", Icons.Default.Person, "Profil")
 }
 
@@ -45,7 +45,6 @@ fun MainScreen(
 ) {
     var selectedTab by remember { mutableStateOf(startTab) }
     val items = listOf(
-        BottomNavItem.Home,
         BottomNavItem.Saved,
         BottomNavItem.Career,
         BottomNavItem.Profile
@@ -93,13 +92,9 @@ fun MainScreen(
                 .padding(paddingValues)
         ) {
             when (selectedTab) {
-                0 -> HomeView(
-                    viewModel = homeViewModel,
-                    userName = "User"
-                )
-                1 -> JobListScreen(navController, JobListStatus.ALL)
-                2 -> ApplicationScreen()
-                3 -> UserProfileViewNew(
+                0 -> JobListScreen(navController, JobListStatus.ALL)
+                1 -> ApplicationScreen()
+                2 -> UserProfileViewNew(
                     viewModel = profileViewModel,
                     achievementViewModel = achievementViewModel,
                     experienceViewModel = experienceViewModel,
