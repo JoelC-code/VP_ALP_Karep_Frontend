@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -30,6 +33,8 @@ import com.example.vp_alp_karep_frontend.models.ApplicationModel
 import com.example.vp_alp_karep_frontend.models.JobModel
 import com.example.vp_alp_karep_frontend.models.JobTagModel
 
+private val CardBackground = Color(0xFF1E3A41)
+
 @Composable
 fun ApplicationCards(
     onCancel: (Int) -> Unit,
@@ -37,40 +42,50 @@ fun ApplicationCards(
     applications: List<ApplicationModel>
 ) {
     LazyColumn(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         items(applications) { app ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = CardBackground),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+
+                    // Job Name
                     Text(
                         text = app.job!!.name,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
                     )
+
+                    // Company Placeholder
                     Text(
                         text = "Company",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    // Status
                     Text(
-                        text = "Status: ${app.status.displayText()}",
-                        style = MaterialTheme.typography.bodySmall
+                        text = "Status: ${app.status.name}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Cancel/Delete buttons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if(app.status == ApplicationStatus.Pending) {
+                        if (app.status == ApplicationStatus.Pending) {
                             Button(
                                 onClick = { onCancel(app.id) },
                                 colors = ButtonDefaults.buttonColors(
@@ -84,16 +99,30 @@ fun ApplicationCards(
                                 )
                             }
                         }
-                        if(app.status == ApplicationStatus.Rejected || app.status == ApplicationStatus.Cancelled) {
-                            Button (
+                        if (app.status == ApplicationStatus.Rejected || app.status == ApplicationStatus.Cancelled) {
+                            Button(
                                 onClick = { onDelete(app.id) },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.secondary,
                                     contentColor = MaterialTheme.colorScheme.onSecondary
                                 )
                             ) {
-                                Icon (
+                                Icon(
                                     imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete"
+                                )
+                            }
+                        }
+                        if (app.status == ApplicationStatus.Accepted || app.status == ApplicationStatus.Accepted) {
+                            Button(
+                                onClick = {},
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF36963A),
+                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
                                     contentDescription = "Delete"
                                 )
                             }
@@ -137,7 +166,7 @@ fun ApplicationContentPreview() {
         ),
         ApplicationModel(
             id = 3,
-            status = ApplicationStatus.Cancelled,
+            status = ApplicationStatus.Accepted,
             job = JobModel(
                 id = 3,
                 name = "UI/UX Designer",
