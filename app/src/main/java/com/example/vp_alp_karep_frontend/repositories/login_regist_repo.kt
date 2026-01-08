@@ -13,9 +13,11 @@ import retrofit2.Response
 interface LoginRegistRepositoryInterface {
     suspend fun saveAuthToken(token: String)
     suspend fun saveUserInfo(userId: String, username: String)
+    suspend fun saveAccountType(accountType: String)
     fun getAuthToken(): Flow<String?>
     fun getUserId(): Flow<String?>
     fun getUsername(): Flow<String?>
+    fun getAccountType(): Flow<String?>
     suspend fun clearAuthData()
     suspend fun login(loginRequest: LoginRequest): Response<LoginResponse>
     suspend fun register(registerRequest: RegisterRequest): Response<RegisterResponse>
@@ -31,6 +33,7 @@ class LoginRegistRepository(
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
         private val USER_ID_KEY = stringPreferencesKey("user_id")
         private val USERNAME_KEY = stringPreferencesKey("username")
+        private val ACCOUNT_TYPE_KEY = stringPreferencesKey("account_type")
     }
 
     // DataStore operations
@@ -44,6 +47,12 @@ class LoginRegistRepository(
         dataStore.edit { preferences ->
             preferences[USER_ID_KEY] = userId
             preferences[USERNAME_KEY] = username
+        }
+    }
+
+    override suspend fun saveAccountType(accountType: String) {
+        dataStore.edit { preferences ->
+            preferences[ACCOUNT_TYPE_KEY] = accountType
         }
     }
 
@@ -65,11 +74,18 @@ class LoginRegistRepository(
         }
     }
 
+    override fun getAccountType(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[ACCOUNT_TYPE_KEY]
+        }
+    }
+
     override suspend fun clearAuthData() {
         dataStore.edit { preferences ->
             preferences.remove(TOKEN_KEY)
             preferences.remove(USER_ID_KEY)
             preferences.remove(USERNAME_KEY)
+            preferences.remove(ACCOUNT_TYPE_KEY)
         }
     }
 

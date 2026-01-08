@@ -45,7 +45,8 @@ class AppContainer(
         4. Ganti "192.168.x.xx" pada backendURL dengan IPv4 Address yang ditemukan
         -- IP Address UC bisa beda beda jadi cari sendiri dan ganti sebelum presentasi! --
      */
-    private val backendURL = "http://192.168.5.50:3000/"
+//    private val backendURL = "http://192.168.5.50:3000/"
+    private val backendURL = "http://10.0.172.93:3000/"
 
     private fun initRetrofit(): Retrofit {
         val logging = HttpLoggingInterceptor()

@@ -47,8 +47,9 @@ class LoginViewModel(
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse?.data?.token != null) {
-                        // Save token
+                        // Save token and account type
                         loginRepository.saveAuthToken(loginResponse.data.token)
+                        loginRepository.saveAccountType(loginResponse.data.accountType)
                         loginRepository.saveUserInfo(
                             userId = "0",
                             username = _uiState.value.username
@@ -57,7 +58,8 @@ class LoginViewModel(
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isLoginSuccessful = true,
-                            errorMessage = null
+                            errorMessage = null,
+                            accountType = loginResponse.data.accountType
                         )
                     } else {
                         _uiState.value = _uiState.value.copy(

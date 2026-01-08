@@ -31,6 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vp_alp_karep_frontend.models.CompanyModels.JobCompanyModel
 
+// Professional color scheme - Balanced for eye comfort
+private val PrimaryTeal = Color(0xFF1A4D56)
+private val AccentGold = Color(0xFFD4AF37)
+private val LightGold = Color(0xFFF0E5C9)
+private val CardBackground = Color(0xFF1E3A41)
+private val SecondaryTeal = Color(0xFF2A5F69)
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun JobCard(
@@ -41,10 +48,10 @@ fun JobCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = CardBackground
         )
     ) {
         Row(
@@ -62,7 +69,7 @@ fun JobCard(
                     text = jobModel.name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    color = Color.White,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -71,7 +78,7 @@ fun JobCard(
                     Text(
                         text = jobModel.description,
                         fontSize = 14.sp,
-                        color = Color.DarkGray,
+                        color = Color.White.copy(alpha = 0.7f),
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -88,10 +95,11 @@ fun JobCard(
                                 Text(
                                     text = tagData.name,
                                     fontSize = 12.sp,
-                                    color = Color.White,
+                                    color = PrimaryTeal,
+                                    fontWeight = FontWeight.Medium,
                                     modifier = Modifier
                                         .background(
-                                            color = Color(0xFF4CAF50),
+                                            color = AccentGold,
                                             shape = RoundedCornerShape(16.dp)
                                         )
                                         .padding(horizontal = 12.dp, vertical = 6.dp)
@@ -114,7 +122,7 @@ fun JobCard(
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Update job",
-                        tint = Color(0xFF2196F3),
+                        tint = AccentGold,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -126,7 +134,7 @@ fun JobCard(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Delete job",
-                        tint = Color(0xFFF44336),
+                        tint = Color(0xFFE57373),
                         modifier = Modifier.size(20.dp)
                     )
                 }

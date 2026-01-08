@@ -14,9 +14,12 @@ import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ApplicationResponse
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ErrorModel
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.ApplicationCompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.LoginRegistRepository
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.ApplicationStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.StringDataStatusUIState
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import retrofit2.Callback
 import okio.IOException
@@ -24,36 +27,44 @@ import retrofit2.Call
 import retrofit2.Response
 
 class ApplicationViewModel(
-    private val applicationRepository: ApplicationCompanyRepositoryInterface
+    private val applicationRepository: ApplicationCompanyRepositoryInterface,
+    private val loginRepository: LoginRegistRepository
 ): ViewModel() {
-    var getApplicationsStatus: ApplicationStatusUIState by mutableStateOf(
-        ApplicationStatusUIState.Start)
-        private set
+    private val _getApplicationsStatus = MutableStateFlow<ApplicationStatusUIState>(
+        ApplicationStatusUIState.Start
+    )
+    val getApplicationsStatus = _getApplicationsStatus
 
-    var acceptApplicationStatus: StringDataStatusUIState by mutableStateOf(
-        StringDataStatusUIState.Start)
-        private set
+    private val _acceptApplicationStatus = MutableStateFlow<StringDataStatusUIState>(
+        StringDataStatusUIState.Start
+    )
+    val acceptApplicationStatus = _acceptApplicationStatus
 
-    var rejectApplicationStatus: StringDataStatusUIState by mutableStateOf(
-        StringDataStatusUIState.Start)
-        private set
+    private val _rejectApplicationStatus = MutableStateFlow<StringDataStatusUIState>(
+        StringDataStatusUIState.Start
+    )
+    val rejectApplicationStatus = _rejectApplicationStatus
 
-    fun getApplications(
-        token: String
-    ) {
+    fun getApplications() {
         viewModelScope.launch {
-            getApplicationsStatus = ApplicationStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _getApplicationsStatus.value =
+                    ApplicationStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _getApplicationsStatus.value = ApplicationStatusUIState.Loading
 
             try {
                 val call = applicationRepository.getApplications(token)
 
-                call.enqueue(object: Callback<ApplicationResponse>{
+                call.enqueue(object : Callback<ApplicationResponse> {
                     override fun onResponse(
                         call: Call<ApplicationResponse?>,
                         res: Response<ApplicationResponse?>
                     ) {
                         if (res.isSuccessful) {
-                            getApplicationsStatus = ApplicationStatusUIState.Success(
+                            _getApplicationsStatus.value = ApplicationStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -62,7 +73,7 @@ class ApplicationViewModel(
                                 ErrorModel::class.java
                             )
 
-                            getApplicationsStatus = ApplicationStatusUIState.Failed(
+                            _getApplicationsStatus.value = ApplicationStatusUIState.Failed(
                                 errorMessage.errors
                             )
                         }
@@ -72,21 +83,28 @@ class ApplicationViewModel(
                         call: Call<ApplicationResponse?>,
                         t: Throwable
                     ) {
-                        getApplicationsStatus = ApplicationStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
+                        _getApplicationsStatus.value =
+                            ApplicationStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
                 })
             } catch (error: IOException) {
-                getApplicationsStatus = ApplicationStatusUIState.Failed(error.localizedMessage ?: "Network error")
+                _getApplicationsStatus.value =
+                    ApplicationStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
 
     fun acceptApplication(
-        token: String,
         applicationId: Int
     ) {
         viewModelScope.launch {
-            acceptApplicationStatus = StringDataStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _acceptApplicationStatus.value =
+                    StringDataStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _acceptApplicationStatus.value = StringDataStatusUIState.Loading
 
             try {
                 val call = applicationRepository.acceptApplication(
@@ -94,45 +112,54 @@ class ApplicationViewModel(
                     applicationId
                 )
 
-                call.enqueue(object: Callback<GeneralResponseCompanyModel>{
+                call.enqueue(object : Callback<GeneralResponseCompanyModel> {
                     override fun onResponse(
                         call: Call<GeneralResponseCompanyModel>,
                         res: Response<GeneralResponseCompanyModel>
                     ) {
                         if (res.isSuccessful) {
-                            acceptApplicationStatus = StringDataStatusUIState.Success(res.body()!!.data)
+                            _acceptApplicationStatus.value =
+                                StringDataStatusUIState.Success(res.body()!!.data)
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
 
-                            acceptApplicationStatus = StringDataStatusUIState.Failed(
+                            _acceptApplicationStatus.value = StringDataStatusUIState.Failed(
                                 errorMessage.errors
                             )
                         }
                     }
+
                     override fun onFailure(
                         call: Call<GeneralResponseCompanyModel>,
                         t: Throwable
                     ) {
-                        acceptApplicationStatus = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
+                        _acceptApplicationStatus.value =
+                            StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
 
                 })
 
             } catch (error: IOException) {
-                acceptApplicationStatus = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
+                _acceptApplicationStatus.value =
+                    StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
 
     fun rejectApplication(
-        token: String,
         applicationId: Int
     ) {
         viewModelScope.launch {
-            rejectApplicationStatus = StringDataStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _rejectApplicationStatus.value =
+                    StringDataStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _rejectApplicationStatus.value = StringDataStatusUIState.Loading
 
             try {
                 val call = applicationRepository.rejectApplication(
@@ -146,7 +173,7 @@ class ApplicationViewModel(
                         res: Response<GeneralResponseCompanyModel>
                     ) {
                         if (res.isSuccessful) {
-                            rejectApplicationStatus = StringDataStatusUIState.Success(
+                            _rejectApplicationStatus.value = StringDataStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -155,7 +182,7 @@ class ApplicationViewModel(
                                 ErrorModel::class.java
                             )
 
-                            rejectApplicationStatus = StringDataStatusUIState.Failed(
+                            _rejectApplicationStatus.value = StringDataStatusUIState.Failed(
                                 errorMessage.errors
                             )
                         }
@@ -164,35 +191,36 @@ class ApplicationViewModel(
                         call: Call<GeneralResponseCompanyModel>,
                         t: Throwable
                     ) {
-                        rejectApplicationStatus = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
+                        _rejectApplicationStatus.value = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
 
                 })
 
             } catch (error: IOException) {
-                rejectApplicationStatus = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
+                _rejectApplicationStatus.value = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
 
     fun clearGetApplicationsErrorMessage() {
-        getApplicationsStatus = ApplicationStatusUIState.Start
+        _getApplicationsStatus.value = ApplicationStatusUIState.Start
     }
 
     fun clearAcceptApplicationStatusErrorMessage() {
-        acceptApplicationStatus = StringDataStatusUIState.Start
+        _acceptApplicationStatus.value = StringDataStatusUIState.Start
     }
 
     fun clearRejectApplicationStatusErrorMessage() {
-        rejectApplicationStatus = StringDataStatusUIState.Start
+        _rejectApplicationStatus.value = StringDataStatusUIState.Start
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
-                val applicationRRepository = application.container.applicationCompanyRepository
-                ApplicationViewModel(applicationRRepository)
+                val applicationRepository = application.container.applicationCompanyRepository
+                val loginRepository = application.container.loginRegistRepository
+                ApplicationViewModel(applicationRepository, loginRepository)
             }
         }
     }

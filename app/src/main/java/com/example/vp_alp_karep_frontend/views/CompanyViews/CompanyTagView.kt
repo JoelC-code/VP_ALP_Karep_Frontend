@@ -31,8 +31,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,25 +44,33 @@ import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.CompanyTagStat
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.StringDataStatusUIState
 import com.example.vp_alp_karep_frontend.viewModels.CompanyViewModels.CompanyTagViewModel
 
+// Professional color scheme - Balanced for eye comfort
+private val PrimaryTeal = Color(0xFF1A4D56)
+private val AccentGold = Color(0xFFD4AF37)
+private val LightGold = Color(0xFFF0E5C9)
+private val DarkTeal = Color(0xFF0F2F35)
+private val BackgroundDark = Color(0xFF0A2026)
+private val CardBackground = Color(0xFF1E3A41)
+private val SecondaryTeal = Color(0xFF2A5F69)
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CompanyTagView(
     modifier: Modifier = Modifier,
     companyTagViewModel: CompanyTagViewModel,
-    token: String,
     context: Context,
     onBackClick: () -> Unit = {}
 ) {
-    val getAllTagsStatus = companyTagViewModel.getAllTagsStatus
-    val getCompanyProfileStatus = companyTagViewModel.getCompanyProfileStatus
-    val updateTagsStatus = companyTagViewModel.updateTagsStatus
+    val getAllTagsStatus = companyTagViewModel.getAllTagsStatus.collectAsState().value
+    val getCompanyProfileStatus = companyTagViewModel.getCompanyProfileStatus.collectAsState().value
+    val updateTagsStatus = companyTagViewModel.updateTagsStatus.collectAsState().value
     val selectedTagIds = companyTagViewModel.selectedTagIds
 
     var currentTags: List<CompanyTagsModel> = emptyList()
 
     LaunchedEffect(Unit) {
-        companyTagViewModel.getAllTags(token)
-        companyTagViewModel.getCompanyProfile(token)
+        companyTagViewModel.getAllTags()
+        companyTagViewModel.getCompanyProfile()
     }
 
     LaunchedEffect(updateTagsStatus) {
@@ -72,7 +82,7 @@ fun CompanyTagView(
                     Toast.LENGTH_SHORT
                 ).show()
                 companyTagViewModel.clearUpdateTagsStatus()
-                companyTagViewModel.getCompanyProfile(token)
+                companyTagViewModel.getCompanyProfile()
             }
             is StringDataStatusUIState.Failed -> {
                 Toast.makeText(
@@ -86,141 +96,164 @@ fun CompanyTagView(
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
-            .statusBarsPadding()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        BackgroundDark,
+                        DarkTeal,
+                        PrimaryTeal.copy(alpha = 0.4f),
+                        SecondaryTeal.copy(alpha = 0.2f)
+                    ),
+                    startY = 0f,
+                    endY = Float.POSITIVE_INFINITY
+                )
+            )
     ) {
-        // Header with back button
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.size(40.dp)
+            // Header with back button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+                Text(
+                    text = "Manage Company Tags",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
-            Text(
-                text = "Manage Company Tags",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
 
-        // Content
-        when {
-            getAllTagsStatus is CompanyTagStatusUIState.Loading ||
-            getCompanyProfileStatus is CompanyTagStatusUIState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color.Black)
-                }
-            }
-            getAllTagsStatus is CompanyTagStatusUIState.Failed -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = getAllTagsStatus.errorMessage,
-                        color = Color.Red,
-                        fontSize = 16.sp
-                    )
-                }
-            }
-            getCompanyProfileStatus is CompanyTagStatusUIState.Failed -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = getCompanyProfileStatus.errorMessage,
-                        color = Color.Red,
-                        fontSize = 16.sp
-                    )
-                }
-            }
-            getAllTagsStatus is CompanyTagStatusUIState.Success &&
-            getCompanyProfileStatus is CompanyTagStatusUIState.Success -> {
-                val allTags = getAllTagsStatus.tags
-                currentTags = getCompanyProfileStatus.tags
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(
-                        text = "Select tags for your company:",
-                        fontSize = 16.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    // Tags grid
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+            // Content
+            when {
+                getAllTagsStatus is CompanyTagStatusUIState.Loading ||
+                        getCompanyProfileStatus is CompanyTagStatusUIState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        allTags.forEach { tag ->
-                            val isSelected = selectedTagIds.contains(tag.id)
-                            TagChip(
-                                tag = tag,
-                                isSelected = isSelected,
-                                onClick = {
-                                    companyTagViewModel.toggleTagSelection(tag.id)
-                                }
-                            )
-                        }
+                        CircularProgressIndicator(color = AccentGold)
                     }
+                }
+                getAllTagsStatus is CompanyTagStatusUIState.Failed -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = getAllTagsStatus.errorMessage,
+                            color = Color(0xFFE57373),
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+                getCompanyProfileStatus is CompanyTagStatusUIState.Failed -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = getCompanyProfileStatus.errorMessage,
+                            color = Color(0xFFE57373),
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+                getAllTagsStatus is CompanyTagStatusUIState.Success &&
+                        getCompanyProfileStatus is CompanyTagStatusUIState.Success -> {
+                    val allTags = getAllTagsStatus.tags
+                    currentTags = getCompanyProfileStatus.tags
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Update button
-                    Button(
-                        onClick = {
-                            companyTagViewModel.updateTags(token, currentTags)
-                        },
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        enabled = updateTagsStatus !is StringDataStatusUIState.Loading
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
+                            .verticalScroll(rememberScrollState())
                     ) {
-                        if (updateTagsStatus is StringDataStatusUIState.Loading) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Update Tags",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    }
+                        Text(
+                            text = "Select tags for your company:",
+                            fontSize = 16.sp,
+                            color = LightGold,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                        // Tags grid
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            allTags.forEach { tag ->
+                                val isSelected = selectedTagIds.contains(tag.id)
+                                TagChip(
+                                    tag = tag,
+                                    isSelected = isSelected,
+                                    onClick = {
+                                        companyTagViewModel.toggleTagSelection(tag.id)
+                                    }
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        // Update button
+                        Button(
+                            onClick = {
+                                companyTagViewModel.updateTags(currentTags)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = AccentGold,
+                                contentColor = PrimaryTeal,
+                                disabledContainerColor = AccentGold.copy(alpha = 0.6f)
+                            ),
+                            shape = RoundedCornerShape(14.dp),
+                            enabled = updateTagsStatus !is StringDataStatusUIState.Loading,
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp,
+                                pressedElevation = 8.dp
+                            )
+                        ) {
+                            if (updateTagsStatus is StringDataStatusUIState.Loading) {
+                                CircularProgressIndicator(
+                                    color = PrimaryTeal,
+                                    modifier = Modifier.size(24.dp),
+                                    strokeWidth = 3.dp
+                                )
+                            } else {
+                                Text(
+                                    text = "Update Tags",
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.5.sp
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
                 }
             }
         }
@@ -236,12 +269,12 @@ fun TagChip(
     Box(
         modifier = Modifier
             .background(
-                color = if (isSelected) Color.Black else Color.White,
+                color = if (isSelected) AccentGold else CardBackground,
                 shape = RoundedCornerShape(20.dp)
             )
             .border(
                 width = 1.dp,
-                color = Color.Black,
+                color = if (isSelected) AccentGold else Color.White.copy(alpha = 0.3f),
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable(onClick = onClick)
@@ -249,9 +282,9 @@ fun TagChip(
     ) {
         Text(
             text = tag.name,
-            color = if (isSelected) Color.White else Color.Black,
+            color = if (isSelected) PrimaryTeal else Color.White,
             fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
         )
     }
 }

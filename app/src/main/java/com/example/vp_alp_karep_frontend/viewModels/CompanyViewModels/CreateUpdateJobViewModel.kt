@@ -14,9 +14,12 @@ import com.example.vp_alp_karep_frontend.models.CompanyModels.ErrorModel
 import com.example.vp_alp_karep_frontend.models.CompanyModels.JobResponse
 import com.example.vp_alp_karep_frontend.models.CompanyModels.JobTagsResponse
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.JobCompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.LoginRegistRepository
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.JobTagStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.JobDetailStatusUIState
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Call
@@ -24,27 +27,28 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CreateUpdateJobViewModel(
-    private val jobRepository: JobCompanyRepositoryInterface
+    private val jobRepository: JobCompanyRepositoryInterface,
+    private val loginRepository: LoginRegistRepository
 ): ViewModel() {
-    var getAllJobTagsStatus: JobTagStatusUIState by mutableStateOf(
+    private val _getAllJobTagsStatus = MutableStateFlow<JobTagStatusUIState>(
         JobTagStatusUIState.Start
     )
-        private set
+    val getAllJobTagsStatus = _getAllJobTagsStatus
 
-    var getJobStatus: JobDetailStatusUIState by mutableStateOf(
+    private val _getJobStatus = MutableStateFlow<JobDetailStatusUIState>(
         JobDetailStatusUIState.Start
     )
-        private set
+    val getJobStatus = _getJobStatus
 
-    var createJobStatus: JobDetailStatusUIState by mutableStateOf(
+    private val _createJobStatus = MutableStateFlow<JobDetailStatusUIState>(
         JobDetailStatusUIState.Start
     )
-        private set
+    val createJobStatus = _createJobStatus
 
-    var updateJobStatus: JobDetailStatusUIState by mutableStateOf(
+    private val _updateJobStatus = MutableStateFlow<JobDetailStatusUIState>(
         JobDetailStatusUIState.Start
     )
-        private set
+    val updateJobStatus = _updateJobStatus
 
     // Mode: "create" or "update"
     var mode: String by mutableStateOf("create")
@@ -78,14 +82,20 @@ class CreateUpdateJobViewModel(
     }
 
     fun clearAllStatuses() {
-        createJobStatus = JobDetailStatusUIState.Start
-        updateJobStatus = JobDetailStatusUIState.Start
-        getJobStatus = JobDetailStatusUIState.Start
+        _createJobStatus.value = JobDetailStatusUIState.Start
+        _updateJobStatus.value = JobDetailStatusUIState.Start
+        _getJobStatus.value = JobDetailStatusUIState.Start
     }
 
-    fun getAllJobTags(token: String) {
+    fun getAllJobTags() {
         viewModelScope.launch {
-            getAllJobTagsStatus = JobTagStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _getAllJobTagsStatus.value =
+                    JobTagStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _getAllJobTagsStatus.value = JobTagStatusUIState.Loading
 
             try {
                 val call = jobRepository.getAllJobTags(token)
@@ -96,7 +106,7 @@ class CreateUpdateJobViewModel(
                         res: Response<JobTagsResponse>
                     ) {
                         if (res.isSuccessful) {
-                            getAllJobTagsStatus = JobTagStatusUIState.Success(
+                            _getAllJobTagsStatus.value = JobTagStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -104,7 +114,7 @@ class CreateUpdateJobViewModel(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            getAllJobTagsStatus = JobTagStatusUIState.Failed(errorMessage.errors)
+                            _getAllJobTagsStatus.value = JobTagStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -112,22 +122,28 @@ class CreateUpdateJobViewModel(
                         call: Call<JobTagsResponse>,
                         t: Throwable
                     ) {
-                        getAllJobTagsStatus = JobTagStatusUIState.Failed(
+                        _getAllJobTagsStatus.value = JobTagStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                getAllJobTagsStatus = JobTagStatusUIState.Failed(
+                _getAllJobTagsStatus.value = JobTagStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
         }
     }
 
-    fun getJob(token: String, jobId: Int) {
+    fun getJob(jobId: Int) {
         viewModelScope.launch {
-            getJobStatus = JobDetailStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _getJobStatus.value =
+                    JobDetailStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _getJobStatus.value = JobDetailStatusUIState.Loading
 
             try {
                 val call = jobRepository.getJob(token, jobId)
@@ -142,16 +158,16 @@ class CreateUpdateJobViewModel(
                             if (job != null) {
                                 // Set selected tags from job data
                                 selectedTagIds = job.tags.mapNotNull { tagResponse -> tagResponse.data?.id }.toSet()
-                                getJobStatus = JobDetailStatusUIState.Success(job)
+                                _getJobStatus.value = JobDetailStatusUIState.Success(job)
                             } else {
-                                getJobStatus = JobDetailStatusUIState.Failed("Job data is null")
+                                _getJobStatus.value = JobDetailStatusUIState.Failed("Job data is null")
                             }
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            getJobStatus = JobDetailStatusUIState.Failed(errorMessage.errors)
+                            _getJobStatus.value = JobDetailStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -159,13 +175,13 @@ class CreateUpdateJobViewModel(
                         call: Call<JobResponse>,
                         t: Throwable
                     ) {
-                        getJobStatus = JobDetailStatusUIState.Failed(
+                        _getJobStatus.value = JobDetailStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                getJobStatus = JobDetailStatusUIState.Failed(
+                _getJobStatus.value = JobDetailStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
@@ -173,13 +189,18 @@ class CreateUpdateJobViewModel(
     }
 
     fun createJob(
-        token: String,
         name: String,
         description: String?,
         tags: List<Int>
     ) {
         viewModelScope.launch {
-            createJobStatus = JobDetailStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _createJobStatus.value =
+                    JobDetailStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _createJobStatus.value = JobDetailStatusUIState.Loading
 
             try {
                 val call = jobRepository.createJob(token, name, description, tags)
@@ -192,17 +213,17 @@ class CreateUpdateJobViewModel(
                         if (res.isSuccessful) {
                             val job = res.body()?.data
                             if (job != null) {
-                                createJobStatus = JobDetailStatusUIState.Success(job)
+                                _createJobStatus.value = JobDetailStatusUIState.Success(job)
                             } else {
                                 // Backend doesn't return data, but operation succeeded
-                                createJobStatus = JobDetailStatusUIState.SuccessNoData
+                                _createJobStatus.value = JobDetailStatusUIState.SuccessNoData
                             }
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            createJobStatus = JobDetailStatusUIState.Failed(errorMessage.errors)
+                            _createJobStatus.value = JobDetailStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -210,13 +231,13 @@ class CreateUpdateJobViewModel(
                         call: Call<JobResponse>,
                         t: Throwable
                     ) {
-                        createJobStatus = JobDetailStatusUIState.Failed(
+                        _createJobStatus.value = JobDetailStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                createJobStatus = JobDetailStatusUIState.Failed(
+                _createJobStatus.value = JobDetailStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
@@ -224,14 +245,19 @@ class CreateUpdateJobViewModel(
     }
 
     fun updateJob(
-        token: String,
         jobId: Int,
         name: String,
         description: String?,
         tags: List<Int>
     ) {
         viewModelScope.launch {
-            updateJobStatus = JobDetailStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _updateJobStatus.value =
+                    JobDetailStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _updateJobStatus.value = JobDetailStatusUIState.Loading
 
             try {
                 val call = jobRepository.updateJob(token, jobId, name, description, tags)
@@ -244,17 +270,17 @@ class CreateUpdateJobViewModel(
                         if (res.isSuccessful) {
                             val job = res.body()?.data
                             if (job != null) {
-                                updateJobStatus = JobDetailStatusUIState.Success(job)
+                                _updateJobStatus.value = JobDetailStatusUIState.Success(job)
                             } else {
                                 // Backend doesn't return data, but operation succeeded
-                                updateJobStatus = JobDetailStatusUIState.SuccessNoData
+                                _updateJobStatus.value = JobDetailStatusUIState.SuccessNoData
                             }
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            updateJobStatus = JobDetailStatusUIState.Failed(errorMessage.errors)
+                            _updateJobStatus.value = JobDetailStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -262,13 +288,13 @@ class CreateUpdateJobViewModel(
                         call: Call<JobResponse>,
                         t: Throwable
                     ) {
-                        updateJobStatus = JobDetailStatusUIState.Failed(
+                        _updateJobStatus.value = JobDetailStatusUIState.Failed(
                             t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                updateJobStatus = JobDetailStatusUIState.Failed(
+                _updateJobStatus.value = JobDetailStatusUIState.Failed(
                     error.localizedMessage ?: "Network error"
                 )
             }
@@ -276,19 +302,19 @@ class CreateUpdateJobViewModel(
     }
 
     fun clearCreateJobStatus() {
-        createJobStatus = JobDetailStatusUIState.Start
+        _createJobStatus.value = JobDetailStatusUIState.Start
     }
 
     fun clearUpdateJobStatus() {
-        updateJobStatus = JobDetailStatusUIState.Start
+        _updateJobStatus.value = JobDetailStatusUIState.Start
     }
 
     fun clearGetJobStatus() {
-        getJobStatus = JobDetailStatusUIState.Start
+        _getJobStatus.value = JobDetailStatusUIState.Start
     }
 
     fun clearGetAllJobTagsStatus() {
-        getAllJobTagsStatus = JobTagStatusUIState.Start
+        _getAllJobTagsStatus.value = JobTagStatusUIState.Start
     }
 
     companion object {
@@ -296,9 +322,8 @@ class CreateUpdateJobViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
                 val jobRepository = application.container.jobCompanyRepository
-                CreateUpdateJobViewModel(
-                    jobRepository = jobRepository
-                )
+                val loginRepository = application.container.loginRegistRepository
+                CreateUpdateJobViewModel(jobRepository, loginRepository)
             }
         }
     }

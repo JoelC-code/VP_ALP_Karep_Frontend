@@ -24,6 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ApplicationCompanyModel
 
+// Professional color scheme - Balanced for eye comfort
+private val PrimaryTeal = Color(0xFF1A4D56)
+private val AccentGold = Color(0xFFD4AF37)
+private val LightGold = Color(0xFFF0E5C9)
+private val CardBackground = Color(0xFF1E3A41)
+
 @Composable
 fun ApplicationCard(
     applicationModel: ApplicationCompanyModel,
@@ -33,10 +39,10 @@ fun ApplicationCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = CardBackground
         )
     ) {
         Column(
@@ -58,20 +64,20 @@ fun ApplicationCard(
                         text = "Application ID: ${applicationModel.id}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.Black
+                        color = Color.White
                     )
 
                     Text(
                         text = "User ID: ${applicationModel.user_id}",
                         fontSize = 14.sp,
-                        color = Color.DarkGray
+                        color = LightGold
                     )
 
                     applicationModel.job?.let { job ->
                         Text(
                             text = "Job: ${job.name}",
                             fontSize = 14.sp,
-                            color = Color.DarkGray,
+                            color = Color.White.copy(alpha = 0.8f),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -99,7 +105,8 @@ fun ApplicationCard(
                             Text(
                                 text = "Reject",
                                 color = Color.White,
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
 
@@ -108,14 +115,15 @@ fun ApplicationCard(
                         Button(
                             onClick = onAccept,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF4CAF50)
+                                containerColor = AccentGold
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
                                 text = "Accept",
-                                color = Color.White,
-                                fontSize = 14.sp
+                                color = PrimaryTeal,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -128,10 +136,10 @@ fun ApplicationCard(
 @Composable
 private fun StatusBadge(status: String) {
     val (backgroundColor, textColor) = when (status.lowercase()) {
-        "pending" -> Pair(Color(0xFFFFF3E0), Color(0xFFF57C00))
-        "accepted" -> Pair(Color(0xFFE8F5E9), Color(0xFF4CAF50))
-        "rejected" -> Pair(Color(0xFFFFEBEE), Color(0xFFE57373))
-        else -> Pair(Color.LightGray, Color.DarkGray)
+        "pending" -> Pair(Color(0xFF8B7355).copy(alpha = 0.3f), AccentGold)
+        "accepted" -> Pair(Color(0xFF4CAF50).copy(alpha = 0.3f), Color(0xFF81C784))
+        "rejected" -> Pair(Color(0xFFE57373).copy(alpha = 0.3f), Color(0xFFE57373))
+        else -> Pair(Color.Gray.copy(alpha = 0.3f), Color.White)
     }
 
     Card(
@@ -150,4 +158,3 @@ private fun StatusBadge(status: String) {
         )
     }
 }
-

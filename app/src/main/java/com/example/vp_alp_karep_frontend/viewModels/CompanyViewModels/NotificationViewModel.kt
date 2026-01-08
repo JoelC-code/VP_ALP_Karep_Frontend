@@ -1,44 +1,51 @@
 package com.example.vp_alp_karep_frontend.viewModels.CompanyViewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.NotificationRepositoryInterface
-import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.NotificationStatusUIState
-import kotlinx.coroutines.launch
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.todolistapp.models.GeneralResponseCompanyModel
 import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.CompanyModels.AllNotificationsResponse
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ErrorModel
+import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.NotificationRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.LoginRegistRepository
+import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.NotificationStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.StringDataStatusUIState
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class NotificationViewModel(
-    private val notificationRepository: NotificationRepositoryInterface
+    private val notificationRepository: NotificationRepositoryInterface,
+    private val loginRepository: LoginRegistRepository
 ): ViewModel() {
-    var getAllNotificationsStatus: NotificationStatusUIState by mutableStateOf(
-        NotificationStatusUIState.Start)
-        private set
+    private val _getAllNotificationsStatus = MutableStateFlow<NotificationStatusUIState>(
+        NotificationStatusUIState.Start
+    )
+    val getAllNotificationsStatus = _getAllNotificationsStatus
 
-    var deleteNotificationStatus: StringDataStatusUIState by mutableStateOf(
-        StringDataStatusUIState.Start)
-        private set
+    private val _deleteNotificationStatus = MutableStateFlow<StringDataStatusUIState>(
+        StringDataStatusUIState.Start
+    )
+    val deleteNotificationStatus = _deleteNotificationStatus
 
-    fun getAllNotifications(
-        token: String,
-    ) {
+    fun getAllNotifications() {
         viewModelScope.launch {
-            getAllNotificationsStatus = NotificationStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _getAllNotificationsStatus.value =
+                    NotificationStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _getAllNotificationsStatus.value = NotificationStatusUIState.Loading
 
             try {
                 val call = notificationRepository.getAllNotifications(token)
@@ -49,7 +56,7 @@ class NotificationViewModel(
                         res: Response<AllNotificationsResponse?>
                     ) {
                         if (res.isSuccessful) {
-                            getAllNotificationsStatus = NotificationStatusUIState.Success(
+                            _getAllNotificationsStatus.value = NotificationStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -58,7 +65,9 @@ class NotificationViewModel(
                                 ErrorModel::class.java
                             )
 
-                            getAllNotificationsStatus = NotificationStatusUIState.Failed(errorMessage.errors)
+                            _getAllNotificationsStatus.value = NotificationStatusUIState.Failed(
+                                errorMessage.errors
+                            )
                         }
                     }
 
@@ -66,25 +75,28 @@ class NotificationViewModel(
                         call: Call<AllNotificationsResponse?>,
                         t: Throwable
                     ) {
-                        getAllNotificationsStatus = NotificationStatusUIState.Failed(
-                            t.localizedMessage
+                        _getAllNotificationsStatus.value = NotificationStatusUIState.Failed(
+                            t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                getAllNotificationsStatus = NotificationStatusUIState.Failed(
-                    error.localizedMessage
+                _getAllNotificationsStatus.value = NotificationStatusUIState.Failed(
+                    error.localizedMessage ?: "Network error"
                 )
             }
         }
     }
 
-    fun deleteNotification(
-        token: String,
-        notificationId: Int
-    ) {
+    fun deleteNotification(notificationId: Int) {
         viewModelScope.launch {
-            deleteNotificationStatus = StringDataStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _deleteNotificationStatus.value =
+                    StringDataStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _deleteNotificationStatus.value = StringDataStatusUIState.Loading
 
             try {
                 val call = notificationRepository.deleteNotification(token, notificationId)
@@ -95,7 +107,7 @@ class NotificationViewModel(
                         res: Response<GeneralResponseCompanyModel>
                     ) {
                         if (res.isSuccessful) {
-                            deleteNotificationStatus = StringDataStatusUIState.Success(
+                            _deleteNotificationStatus.value = StringDataStatusUIState.Success(
                                 res.body()!!.data
                             )
                         } else {
@@ -104,7 +116,9 @@ class NotificationViewModel(
                                 ErrorModel::class.java
                             )
 
-                            deleteNotificationStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                            _deleteNotificationStatus.value = StringDataStatusUIState.Failed(
+                                errorMessage.errors
+                            )
                         }
                     }
 
@@ -112,21 +126,25 @@ class NotificationViewModel(
                         call: Call<GeneralResponseCompanyModel>,
                         t: Throwable
                     ) {
-                        deleteNotificationStatus = StringDataStatusUIState.Failed(
-                            t.localizedMessage
+                        _deleteNotificationStatus.value = StringDataStatusUIState.Failed(
+                            t.localizedMessage ?: "Unknown error"
                         )
                     }
                 })
             } catch (error: IOException) {
-                deleteNotificationStatus = StringDataStatusUIState.Failed(
-                    error.localizedMessage
+                _deleteNotificationStatus.value = StringDataStatusUIState.Failed(
+                    error.localizedMessage ?: "Network error"
                 )
             }
         }
     }
 
     fun clearDeleteNotificationErrorMessage() {
-        deleteNotificationStatus = StringDataStatusUIState.Start
+        _deleteNotificationStatus.value = StringDataStatusUIState.Start
+    }
+
+    fun clearGetAllNotificationsErrorMessage() {
+        _getAllNotificationsStatus.value = NotificationStatusUIState.Start
     }
 
     companion object {
@@ -134,9 +152,8 @@ class NotificationViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
                 val notificationRepository = application.container.notificationRepository
-                NotificationViewModel(
-                    notificationRepository = notificationRepository
-                )
+                val loginRepository = application.container.loginRegistRepository
+                NotificationViewModel(notificationRepository, loginRepository)
             }
         }
     }

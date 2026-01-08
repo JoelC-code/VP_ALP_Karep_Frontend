@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,18 +26,26 @@ import com.example.vp_alp_karep_frontend.viewModels.CompanyViewModels.UpdateComp
 import java.text.SimpleDateFormat
 import java.util.*
 
+// Professional color scheme - Balanced for eye comfort
+private val PrimaryTeal = Color(0xFF1A4D56)
+private val AccentGold = Color(0xFFD4AF37)
+private val LightGold = Color(0xFFF0E5C9)
+private val DarkTeal = Color(0xFF0F2F35)
+private val BackgroundDark = Color(0xFF0A2026)
+private val CardBackground = Color(0xFF1E3A41)
+private val SecondaryTeal = Color(0xFF2A5F69)
+
 @Composable
 fun UpdateCompanyView(
     modifier: Modifier = Modifier,
     updateCompanyViewModel: UpdateCompanyViewModel,
-    token: String,
     context: Context,
     onBackClick: () -> Unit = {},
     onUpdateSuccess: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-    val getCompanyProfileStatus = updateCompanyViewModel.getCompanyProfileStatus
-    val updateCompanyStatus = updateCompanyViewModel.updateCompanyStatus
+    val getCompanyProfileStatus = updateCompanyViewModel.getCompanyProfileStatus.collectAsState().value
+    val updateCompanyStatus = updateCompanyViewModel.updateCompanyStatus.collectAsState().value
 
     var name by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -48,8 +57,8 @@ fun UpdateCompanyView(
 
     var isLoaded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(token) {
-        updateCompanyViewModel.getCompanyProfile(token)
+    LaunchedEffect(Unit) {
+        updateCompanyViewModel.getCompanyProfile()
     }
 
     LaunchedEffect(getCompanyProfileStatus) {
@@ -102,232 +111,313 @@ fun UpdateCompanyView(
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
-            .statusBarsPadding()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        BackgroundDark,
+                        DarkTeal,
+                        PrimaryTeal.copy(alpha = 0.4f),
+                        SecondaryTeal.copy(alpha = 0.2f)
+                    ),
+                    startY = 0f,
+                    endY = Float.POSITIVE_INFINITY
+                )
+            )
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.size(48.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black,
-                    modifier = Modifier.size(24.dp)
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Text(
+                    text = "Update Company Profile",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
 
-            Text(
-                text = "Update Company Profile",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
-
-        when (getCompanyProfileStatus) {
-            is CompanyStatusUIState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is CompanyStatusUIState.Success -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Company Name *") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = address,
-                        onValueChange = { address = it },
-                        label = { Text("Address") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 2,
-                        maxLines = 4,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = phoneNumber,
-                        onValueChange = { phoneNumber = it },
-                        label = { Text("Phone Number") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = website,
-                        onValueChange = { website = it },
-                        label = { Text("Website") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = foundingDate,
-                        onValueChange = { foundingDate = it },
-                        label = { Text("Founding Date (yyyy-MM-dd)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        placeholder = { Text("e.g., 2020-01-15") },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = visionMission,
-                        onValueChange = { visionMission = it },
-                        label = { Text("Vision & Mission") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 3,
-                        maxLines = 6,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = { Text("Description") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 3,
-                        maxLines = 6,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2196F3),
-                            unfocusedBorderColor = Color.LightGray
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Button(
-                        onClick = {
-                            if (name.isBlank()) {
-                                Toast.makeText(
-                                    context,
-                                    "Company name is required",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                return@Button
-                            }
-
-                            val parsedDate = try {
-                                if (foundingDate.isNotBlank()) {
-                                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(foundingDate)
-                                } else {
-                                    null
-                                }
-                            } catch (e: Exception) {
-                                Toast.makeText(
-                                    context,
-                                    "Invalid date format. Please use yyyy-MM-dd",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                return@Button
-                            }
-
-                            updateCompanyViewModel.updateCompanyProfile(
-                                token = token,
-                                name = name,
-                                address = address.takeIf { it.isNotBlank() },
-                                phoneNumber = phoneNumber.takeIf { it.isNotBlank() },
-                                website = website.takeIf { it.isNotBlank() },
-                                visionMission = visionMission.takeIf { it.isNotBlank() },
-                                description = description.takeIf { it.isNotBlank() },
-                                foundingDate = parsedDate,
-                                logoPath = null,
-                                imagePath = null
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF2196F3),
-                            contentColor = Color.White
-                        ),
-                        enabled = updateCompanyStatus !is StringDataStatusUIState.Loading
+            when (getCompanyProfileStatus) {
+                is CompanyStatusUIState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (updateCompanyStatus is StringDataStatusUIState.Loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = Color.White
+                        CircularProgressIndicator(color = AccentGold)
+                    }
+                }
+                is CompanyStatusUIState.Success -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Company Name *", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
                             )
-                        } else {
+                        )
+
+                        OutlinedTextField(
+                            value = address,
+                            onValueChange = { address = it },
+                            label = { Text("Address", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            minLines = 2,
+                            maxLines = 4,
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = phoneNumber,
+                            onValueChange = { phoneNumber = it },
+                            label = { Text("Phone Number", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = website,
+                            onValueChange = { website = it },
+                            label = { Text("Website", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = foundingDate,
+                            onValueChange = { foundingDate = it },
+                            label = { Text("Founding Date (yyyy-MM-dd)", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            placeholder = { Text("e.g., 2020-01-15", color = Color.White.copy(alpha = 0.5f)) },
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = visionMission,
+                            onValueChange = { visionMission = it },
+                            label = { Text("Vision & Mission", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            minLines = 3,
+                            maxLines = 6,
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text("Description", color = LightGold) },
+                            modifier = Modifier.fillMaxWidth(),
+                            minLines = 3,
+                            maxLines = 6,
+                            shape = RoundedCornerShape(14.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentGold,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = AccentGold,
+                                focusedLabelColor = AccentGold,
+                                unfocusedLabelColor = LightGold,
+                                focusedContainerColor = CardBackground,
+                                unfocusedContainerColor = CardBackground
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = {
+                                if (name.isBlank()) {
+                                    Toast.makeText(
+                                        context,
+                                        "Company name is required",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    return@Button
+                                }
+
+                                val parsedDate = try {
+                                    if (foundingDate.isNotBlank()) {
+                                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(foundingDate)
+                                    } else {
+                                        null
+                                    }
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Invalid date format. Please use yyyy-MM-dd",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    return@Button
+                                }
+
+                                updateCompanyViewModel.updateCompanyProfile(
+                                    name = name,
+                                    address = address.takeIf { it.isNotBlank() },
+                                    phoneNumber = phoneNumber.takeIf { it.isNotBlank() },
+                                    website = website.takeIf { it.isNotBlank() },
+                                    visionMission = visionMission.takeIf { it.isNotBlank() },
+                                    description = description.takeIf { it.isNotBlank() },
+                                    foundingDate = parsedDate,
+                                    logoPath = null,
+                                    imagePath = null
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = AccentGold,
+                                contentColor = PrimaryTeal,
+                                disabledContainerColor = AccentGold.copy(alpha = 0.6f)
+                            ),
+                            enabled = updateCompanyStatus !is StringDataStatusUIState.Loading,
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp,
+                                pressedElevation = 8.dp
+                            )
+                        ) {
+                            if (updateCompanyStatus is StringDataStatusUIState.Loading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = PrimaryTeal,
+                                    strokeWidth = 3.dp
+                                )
+                            } else {
+                                Text(
+                                    text = "Update Profile",
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.5.sp
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CircleLoadingTemplate(
+                                color = AccentGold,
+                                trackColor = Color.Transparent
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Update Profile",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                text = "Loading company profile...",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White.copy(alpha = 0.7f)
                             )
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
-            else -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Loading company profile...",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Gray
-                    )
                 }
             }
         }

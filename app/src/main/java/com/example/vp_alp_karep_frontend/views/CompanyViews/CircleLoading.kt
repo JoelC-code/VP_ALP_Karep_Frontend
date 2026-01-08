@@ -8,16 +8,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+// Professional color scheme - Balanced for eye comfort
+private val AccentGold = Color(0xFFD4AF37)
+
 @Composable
 fun CircleLoadingTemplate(
     modifier: Modifier = Modifier,
-    color: Color,
-    trackColor: Color
+    color: Color = AccentGold,
+    trackColor: Color = Color.Transparent
 ) {
     CircularProgressIndicator(
-        modifier = modifier,
+        modifier = modifier.size(40.dp),
         color = color,
         trackColor = trackColor,
+        strokeWidth = 4.dp
     )
 }
 
@@ -28,9 +32,8 @@ fun CircleLoadingTemplate(
 @Composable
 fun CircleLoadingPreview() {
     CircleLoadingTemplate(
-        modifier = Modifier
-            .size(40.dp),
-        color = Color.Black,
+        modifier = Modifier.size(40.dp),
+        color = AccentGold,
         trackColor = Color.Transparent
     )
 }

@@ -28,6 +28,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// Professional color scheme - Balanced for eye comfort
+private val PrimaryTeal = Color(0xFF1A4D56)
+private val AccentGold = Color(0xFFD4AF37)
+private val LightGold = Color(0xFFF0E5C9)
+private val CardBackground = Color(0xFF1E3A41)
+
 @Composable
 fun NotificationCard(
     notificationModel: NotificationModel,
@@ -36,10 +42,10 @@ fun NotificationCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = CardBackground
         )
     ) {
         Row(
@@ -57,7 +63,7 @@ fun NotificationCard(
                     text = notificationModel.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
+                    color = Color.White,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -65,7 +71,7 @@ fun NotificationCard(
                 Text(
                     text = notificationModel.subtitle,
                     fontSize = 14.sp,
-                    color = Color.DarkGray,
+                    color = Color.White.copy(alpha = 0.7f),
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -73,7 +79,7 @@ fun NotificationCard(
                 Text(
                     text = formatDate(notificationModel.date),
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = LightGold
                 )
             }
 
@@ -84,7 +90,7 @@ fun NotificationCard(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Delete notification",
-                    tint = Color.Gray,
+                    tint = Color.White.copy(alpha = 0.5f),
                     modifier = Modifier.size(20.dp)
                 )
             }

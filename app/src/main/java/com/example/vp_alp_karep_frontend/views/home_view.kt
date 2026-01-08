@@ -45,7 +45,7 @@ data class JobItem(
 @Composable
 fun HomeView(
     viewModel: HomeViewModel,
-    userName: String = "Jason",
+    userName: String = "User",
     onJobClick: (JobItem) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()

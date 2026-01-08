@@ -1,8 +1,5 @@
 package com.example.vp_alp_karep_frontend.viewModels.CompanyViewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -14,9 +11,12 @@ import com.example.vp_alp_karep_frontend.KarepApplication
 import com.example.vp_alp_karep_frontend.models.CompanyModels.CompanyResponse
 import com.example.vp_alp_karep_frontend.models.CompanyModels.ErrorModel
 import com.example.vp_alp_karep_frontend.repositories.CompanyRepository.CompanyRepositoryInterface
+import com.example.vp_alp_karep_frontend.repositories.LoginRegistRepository
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.CompanyStatusUIState
 import com.example.vp_alp_karep_frontend.uiStates.CompanyUIStates.StringDataStatusUIState
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Call
@@ -25,19 +25,28 @@ import retrofit2.Response
 import java.util.Date
 
 class UpdateCompanyViewModel(
-    private val companyRepository: CompanyRepositoryInterface
+    private val companyRepository: CompanyRepositoryInterface,
+    private val loginRepository: LoginRegistRepository
 ): ViewModel() {
-    var updateCompanyStatus: StringDataStatusUIState by mutableStateOf(
-        StringDataStatusUIState.Start)
-        private set
+    private val _updateCompanyStatus = MutableStateFlow<StringDataStatusUIState>(
+        StringDataStatusUIState.Start
+    )
+    val updateCompanyStatus = _updateCompanyStatus
 
-    var getCompanyProfileStatus: CompanyStatusUIState by mutableStateOf(
-        CompanyStatusUIState.Start)
-        private set
+    private val _getCompanyProfileStatus = MutableStateFlow<CompanyStatusUIState>(
+        CompanyStatusUIState.Start
+    )
+    val getCompanyProfileStatus = _getCompanyProfileStatus
 
-    fun getCompanyProfile(token: String) {
+    fun getCompanyProfile() {
         viewModelScope.launch {
-            getCompanyProfileStatus = CompanyStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _getCompanyProfileStatus.value =
+                    CompanyStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _getCompanyProfileStatus.value = CompanyStatusUIState.Loading
 
             try {
                 val call = companyRepository.getCompanyProfile(token)
@@ -48,13 +57,13 @@ class UpdateCompanyViewModel(
                         res: Response<CompanyResponse>
                     ) {
                         if (res.isSuccessful) {
-                            getCompanyProfileStatus = CompanyStatusUIState.Success(res.body()!!.data)
+                            _getCompanyProfileStatus.value = CompanyStatusUIState.Success(res.body()!!.data)
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            getCompanyProfileStatus = CompanyStatusUIState.Failed(errorMessage.errors)
+                            _getCompanyProfileStatus.value = CompanyStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -62,17 +71,16 @@ class UpdateCompanyViewModel(
                         call: Call<CompanyResponse>,
                         t: Throwable
                     ) {
-                        getCompanyProfileStatus = CompanyStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
+                        _getCompanyProfileStatus.value = CompanyStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
                 })
             } catch (error: IOException) {
-                getCompanyProfileStatus = CompanyStatusUIState.Failed(error.localizedMessage ?: "Network error")
+                _getCompanyProfileStatus.value = CompanyStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
 
     fun updateCompanyProfile(
-        token: String,
         name: String,
         address: String?,
         phoneNumber: String?,
@@ -84,7 +92,13 @@ class UpdateCompanyViewModel(
         imagePath: String?
     ) {
         viewModelScope.launch {
-            updateCompanyStatus = StringDataStatusUIState.Loading
+            val token = loginRepository.getAuthToken().firstOrNull() ?: run {
+                _updateCompanyStatus.value =
+                    StringDataStatusUIState.Failed("Authentication token not found")
+                return@launch
+            }
+
+            _updateCompanyStatus.value = StringDataStatusUIState.Loading
 
             try {
                 val call = companyRepository.updateCompanyProfile(
@@ -106,13 +120,13 @@ class UpdateCompanyViewModel(
                         res: Response<GeneralResponseCompanyModel>
                     ) {
                         if (res.isSuccessful) {
-                            updateCompanyStatus = StringDataStatusUIState.Success(res.body()!!.data)
+                            _updateCompanyStatus.value = StringDataStatusUIState.Success(res.body()!!.data)
                         } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
                             )
-                            updateCompanyStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                            _updateCompanyStatus.value = StringDataStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -120,21 +134,21 @@ class UpdateCompanyViewModel(
                         call: Call<GeneralResponseCompanyModel>,
                         t: Throwable
                     ) {
-                        updateCompanyStatus = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
+                        _updateCompanyStatus.value = StringDataStatusUIState.Failed(t.localizedMessage ?: "Unknown error")
                     }
                 })
             } catch (error: IOException) {
-                updateCompanyStatus = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
+                _updateCompanyStatus.value = StringDataStatusUIState.Failed(error.localizedMessage ?: "Network error")
             }
         }
     }
 
     fun clearUpdateCompanyStatusErrorMessage() {
-        updateCompanyStatus = StringDataStatusUIState.Start
+        _updateCompanyStatus.value = StringDataStatusUIState.Start
     }
 
     fun clearGetCompanyProfileErrorMessage() {
-        getCompanyProfileStatus = CompanyStatusUIState.Start
+        _getCompanyProfileStatus.value = CompanyStatusUIState.Start
     }
 
     companion object {
@@ -142,7 +156,8 @@ class UpdateCompanyViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as KarepApplication)
                 val companyRepository = application.container.companyRepository
-                UpdateCompanyViewModel(companyRepository)
+                val loginRepository = application.container.loginRegistRepository
+                UpdateCompanyViewModel(companyRepository, loginRepository)
             }
         }
     }
