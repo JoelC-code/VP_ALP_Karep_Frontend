@@ -127,6 +127,7 @@ fun CompanyMainScreen(
                     viewModel = profileViewModel,
                     achievementViewModel = achievementViewModel,
                     experienceViewModel = experienceViewModel,
+                    navController = navController,
                     onLogout = onLogout
                 )
             }

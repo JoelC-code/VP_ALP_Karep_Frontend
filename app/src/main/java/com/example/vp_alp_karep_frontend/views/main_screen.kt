@@ -17,7 +17,7 @@ import com.example.vp_alp_karep_frontend.viewModels.UserProfileViewModel
 // Professional color scheme - Balanced for eye comfort
 private val PrimaryTeal = Color(0xFF1A4D56)      // Balanced teal - not too bright, not too dark
 private val AccentGold = Color(0xFFD4AF37)       // Brighter gold for better contrast
-private val DarkTeal = Color(0xFF0F2F35)         // Soft dark teal for depth
+private val BackgroundDark = Color(0xFF0A2026)      // Soft dark teal for depth
 private val CardBackground = Color(0xFF1E3A41)   // Comfortable card background
 private val BackgroundGradientStart = Color(0xFF0A2026)  // Subtle dark for gradient
 private val BackgroundGradientEnd = Color(0xFF1A4D56)    // Matches primary teal
@@ -103,6 +103,7 @@ fun MainScreen(
                     viewModel = profileViewModel,
                     achievementViewModel = achievementViewModel,
                     experienceViewModel = experienceViewModel,
+                    navController = navController,
                     onLogout = onLogout
                 )
             }

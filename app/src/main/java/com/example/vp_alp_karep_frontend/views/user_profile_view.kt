@@ -5,6 +5,7 @@ package com.example.vp_alp_karep_frontend.views
 // Main screen uses UserProfileViewNew from user_profile_view_new.kt
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import com.example.vp_alp_karep_frontend.viewModels.AchievementViewModel
 import com.example.vp_alp_karep_frontend.viewModels.ExperienceViewModel
 import com.example.vp_alp_karep_frontend.viewModels.UserProfileViewModel
@@ -23,6 +24,7 @@ fun UserProfileView(
     viewModel: UserProfileViewModel,
     achievementViewModel: AchievementViewModel? = null,
     experienceViewModel: ExperienceViewModel? = null,
+    navController: NavHostController,
     onLogout: () -> Unit
 ) {
     // Redirect to the new implementation
@@ -30,6 +32,7 @@ fun UserProfileView(
         viewModel = viewModel,
         achievementViewModel = achievementViewModel,
         experienceViewModel = experienceViewModel,
+        navController = navController,
         onLogout = onLogout
     )
 }

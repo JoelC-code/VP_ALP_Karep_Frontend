@@ -16,8 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.vp_alp_karep_frontend.models.JobModel
@@ -29,57 +32,68 @@ fun JobDetailContent(
     onApplyClick: () -> Unit,
     onBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = job.name,
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = "Company",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = job.description,
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            job.tags.forEach { tag ->
-                Box(
-                    modifier = Modifier
-                        .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            RoundedCornerShape(12.dp)
+            Text(
+                text = job.name,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Company",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = job.description,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                job.tags.forEach { tag ->
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                shape = RoundedCornerShape(12.dp),
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(Color(0xFF42A5F5), Color(0xFF1E88E5))
+                                )
+                            )
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = tag.name,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White
                         )
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = tag.name,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
             Button(
                 onClick = onApplyClick,
                 modifier = Modifier.fillMaxWidth()
@@ -87,13 +101,14 @@ fun JobDetailContent(
                 Text("Apply Job")
             }
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedButton(
-            onClick = onBack,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Back")
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Back")
+            }
         }
     }
 }
