@@ -26,6 +26,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.vp_alp_karep_frontend.navigation.Screen
 import com.example.vp_alp_karep_frontend.viewModels.UserProfileViewModel
 import com.example.vp_alp_karep_frontend.viewModels.AchievementViewModel
 import com.example.vp_alp_karep_frontend.viewModels.ExperienceViewModel
@@ -56,6 +58,7 @@ fun UserProfileViewNew(
     viewModel: UserProfileViewModel,
     achievementViewModel: AchievementViewModel? = null,
     experienceViewModel: ExperienceViewModel? = null,
+    navController: NavHostController,
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -120,7 +123,9 @@ fun UserProfileViewNew(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { /* Notifications */ },
+                            onClick = {
+                                navController.navigate(Screen.Notifications.route)
+                            },
                             modifier = Modifier
                                 .size(40.dp)
                                 .background(
